@@ -75,6 +75,15 @@ read.Rout: ${@:.Rout=.R} myData.csv
 include ~/lib/common.mk
 ```
 
+Prerequisites
+==========
+
+To use these makefile definitions you need to install
+- GNU Make  http://www.gnu.org/software/make/
+- R         http://www.r-project.org/
+- latexmk   http://http://www.ctan.org/pkg/latexmk/
+- R packages on CRAN: rmarkdown, knitr 
+
 Notes
 =======
 
