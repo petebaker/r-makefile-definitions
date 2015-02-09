@@ -82,7 +82,9 @@ To use these makefile definitions you need to install
 - GNU Make  http://www.gnu.org/software/make/
 - R         http://www.r-project.org/
 - latexmk   http://http://www.ctan.org/pkg/latexmk/
-- R packages on CRAN: rmarkdown, knitr 
+- R packages on CRAN: rmarkdown, knitr
+
+Note that Windows users can install Rtools (available from CRAN) to get a working version of make
 
 Notes
 =======
