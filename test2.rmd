@@ -1,0 +1,51 @@
+---
+title: "Notes on calculating objectives"
+author: "Peter Baker"
+date: "Thursday 5 February 2015"
+output:
+html_document:
+  toc: true
+  theme: united
+pdf_document:
+  toc: true
+  highlight: zenburn
+---
+
+```{r}
+##library(rstudio)
+library(knitr)
+library(rmarkdown)
+library(pander)
+library(lubridate)
+```
+
+# Introduction
+
+**R**, *STATA*, __SPSS__, _SAS_ and most other statistical and database packages
+access data via variable names. These names don't include spaces
+because this would make programming very difficult indeed.  As such,
+variable names aren't very nice to look at when printing tables or
+producing plots. Most packages therefore provide a way of labelling
+variables when producing output. While these variable labels are
+called different things in most packages these are linked to variable
+names without user intervention.
+
+REDCAP provides a .csv file and .R (or stata) file that can be
+employed YO YO
+
+
+# Demo of simple R
+
+```{r foo, echo = TRUE}
+sessionInfo()
+z <- 1+1
+```
+
+z is `r z`
+
+emacs polymode doesn't play well with .Rnw syntax but this should
+still work but doesn't seem to do so'. 
+
+```{r bar}
+hist(rnorm(1000))
+```
