@@ -19,7 +19,7 @@ library(pander)
 library(lubridate)
 ```
 
-# Introduction
+# Generic introduction
 
 **R**, *STATA*, __SPSS__, _SAS_ and most other statistical and database packages
 access data via variable names. These names don't include spaces
@@ -30,10 +30,6 @@ variables when producing output. While these variable labels are
 called different things in most packages these are linked to variable
 names without user intervention.
 
-REDCAP provides a .csv file and .R (or stata) file that can be
-employed YO YO
-
-
 # Demo of simple R
 
 ```{r foo, echo = TRUE}
@@ -43,8 +39,7 @@ z <- 1+1
 
 z is `r z`
 
-emacs polymode doesn't play well with .Rnw syntax but this should
-still work but doesn't seem to do so'. 
+And now for a plot.
 
 ```{r bar}
 hist(rnorm(1000))
