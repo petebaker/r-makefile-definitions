@@ -2,7 +2,7 @@
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave 
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
-##         at the bottom of Makefile
+##         at the bottom of Makefile (or adjust for your directory of choice)
 ##         To override any definitions place them after the include statement
 ## NB: if using makepp then ~ is not recognized but the following is OK
 ##         include ${HOME}/lib/common.mk
@@ -16,13 +16,12 @@
 ##               run $ make help-rmarkdown
 ##            2) Added stitch rules
 
-## TODO: 1) proper documentation            2015-02-06 at 15:41:44
+## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
-##	 3) should put up on github
-##       4) sort out rough edges
+##       3) sort out rough edges
 ## Question: Should I always run 'knit -n -o' to get .tex and run
-##           through latexmk as that will really specify dependencies
-##           properly
+##           through R CMD latexmk as that should specify dependencies
+##           properly but guessing pandoc a better bet in long run
 
 ## For Sweave I've changed the default to knit as that's what I
 ## usually want but to use Sweave then use the following three lines
@@ -85,12 +84,17 @@ R_OPTS    = --vanilla
 RWEAVE    = $(R) CMD Sweave
 RWEAVE_FLAGS =
 
-%.Rout: %.R
-	@echo Job $<: started at `date`
-	${R} ${R_FLAGS} ${R_OPTS} $< 
-	@echo Job $<: finished at `date`
+## produce .Rout from .R file --------------------------------------
 
-## knit (and Sweave) pattern rules --------------------------------------
+## Running R to produce text file output
+## If you want to see start and end time on a linux system uncomment
+##  the echo lines 
+%.Rout: %.R
+##	@echo Job $<: started at `date`
+	${R} ${R_FLAGS} ${R_OPTS} $< 
+##	@echo Job $<: finished at `date`
+
+## knit (and Sweave) pattern rules ----------------------------------
 
 ## KNIT     = knit
 KNIT     = /usr/lib64/R/library/knitr/bin/knit
@@ -194,6 +198,8 @@ help-rmarkdown:
 ## Course slides, notes, etc etc using knitr
 ## Based on Douglas Bates lme course notes course code
 ## but added the slides/article styles as per happymutant website
+## basically needs a line at to of file with beamer options
+## ~~MY~BEAMER~~OPTIONS~~  which gets changed for each different output type
 
 .PHONY: help-slides
 help-slides:
@@ -286,4 +292,4 @@ clean:
 
 .PHONY: backup
 backup:
-	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rout
+	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout

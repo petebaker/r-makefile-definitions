@@ -30,15 +30,15 @@ Using common.mk
    this would something like:
    - ~/lib or C:\MyLibrary
 2. put the following line in your Makefile
-   - include ~/lib, or
-   - include C:\MyLibrary  ?? check this
+   - include ~/lib/cpmmon.mk where ~ will be expanded to be your HOME directory, or
+   - include C:/MyLibrary/common.mk (in windows)
 
 Example Makefiles
 ==============
 
 ```make
 .PHONY : all
-all: test.pdf test.html test.docx test2.pdf test-stitch.pdf
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
@@ -51,7 +51,7 @@ test2.pdf: ${@:.pdf=.rmd}
 ## use stitch to produce pdf via rmarkdown (exactly as in RStudio)
 test-stitch.pdf: ${@:.pdf=.R}
 
-## if you have common in ~/lib directory uncomment line below and comment
+## if you have common.mk in ~/lib directory uncomment line below and comment
 include common.mk
 ##include ~/lib/common.mk
 ```
@@ -84,10 +84,12 @@ To use these makefile definitions you need to install
 - latexmk   http://http://www.ctan.org/pkg/latexmk/
 - R packages on CRAN: rmarkdown, knitr
 
-Note that Windows users can install Rtools (available from CRAN) to get a working version of make
+Note that Windows users can install Rtools (available from CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
+- Rtools   http://cran.r-project.org/bin/windows/Rtools/
+- pandoc   http://johnmacfarlane.net/pandoc/
+- miktex   http://miktex.org/
 
 Notes
 =======
 
-TODO: Need to check if date available under Rtools/msys for windows and if
-not either drop it or do a conditional on OS style definition
+Definitions in 'common.mk' have been developed and tested on linux and tested on windows. Some tweaking may be required.
