@@ -266,7 +266,7 @@ git.commit:
 	${GIT} commit ${GIT_FLAGS}
 
 .PHONY: git.push
-git.fetch:
+git.push:
 	${GIT} push ${GIT_REMOTE}
 
 
