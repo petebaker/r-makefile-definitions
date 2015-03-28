@@ -64,8 +64,9 @@ RUB_FLAGS = -d
 
 ## git variables ---------------------------------------------------
 
-GIT_REMOTE =
+GIT_REMOTE = master
 ## GIT_REMOTE = ssh://pete@192.168.0.1:port/git.repository
+GIT_ORIGIN = origin
 GIT = git
 GIT_FLAGS = -a
 
@@ -267,7 +268,7 @@ git.commit:
 
 .PHONY: git.push
 git.push:
-	${GIT} push ${GIT_REMOTE}
+	${GIT} push ${GIT_ORIGIN} ${GIT_REMOTE}
 
 
 ## Course slides using knit/beamer ----------------------------------------
