@@ -1,5 +1,6 @@
 ## File:    common.mk - to be included in Makefile(s)
-## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave 
+## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
+## Version: 0.2.01
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -10,11 +11,13 @@
 ## For help after including common.mk in Makefile: run
 ##         $  make help
 
-## Changelog: None until Frid 2015-02-06 at 15:40:21
+## Changelog: None recorded until Frid 2015-02-06 at 15:40:21
 ##            On Frid 2015-02-06
 ##            1) Added Rmarkdown rules
 ##               run $ make help-rmarkdown
 ##            2) Added stitch rules
+##            Sat 2015-03-28 at 20:48:20
+##            1) added version
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -44,6 +47,8 @@ help:
 	@echo make help-rmarkdown
 	@echo make help-stitch
 	@echo make help-slides
+	@echo make help-git
+	@echo make help-rsync
 
 # latex pattern rules  ---------------------------------------------------
 
@@ -56,6 +61,22 @@ LATEXMK_FLAGS = -pdf
 ## rubber - latexmk alternative on linux systems only
 RUBBER    = $(R) CMD rubber
 RUB_FLAGS = -d
+
+## git variables ---------------------------------------------------
+
+GIT_REMOTE =
+## GIT_REMOTE = ssh://pete@192.168.0.1:port/git.repository
+GIT = git
+GIT_FLAGS = -a
+
+## rsync variables ------------------------------------------------
+
+RSYNC_DESTINATION =
+## RSYNC_DESTINATION = ~/ownCloud/myProject
+RSYNC = rsync
+RSYNC_FLAGS = -auvtr
+RSYNC_FILES = \*
+RSYNC_DRY_RUN = --dry-run
 
 ## R pattern rules -------------------------------------------------
 .PHONY: help-r
@@ -193,6 +214,62 @@ help-rmarkdown:
 ## uncomment next line if required for debugging latex 
 ## .PRECIOUS: .tex 
 
+## backup using rsync -------------------------------------------------
+.PHONY: help-rsync
+help-rsync:
+	@echo ""
+	@echo Using rsync to backup selected files to local or remote destination
+	@echo ""
+	@echo $$ make rsynctest
+	@echo "  or"
+	@echo $$ make rsynccopy
+	@echo will either run rsync with \'--dry-run\' option to perform a trial run with no changes made
+	@echo " or"
+	@echo copy just those updated files to local/remote destination
+	@echo but your can change options with something like
+	@echo $$ RSYNC_DESTINATION=~/ownCloud/myProject make rsynctest
+
+.PHONY: rsynctest
+rsynctest:
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES}
+
+.PHONY: rsynccopy
+rsynccopy:
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES}
+
+## git  -------------------------------------------------
+
+.PHONY: help-git
+help-git:
+	@echo ""
+	@echo Version control using git
+	@echo ""
+	@echo $$ make git.status
+	@echo $$ make git.commit
+	@echo "  or"
+	@echo $$ make git.fetch
+	@echo will either list changes via \'git status\', commit changes or push to remore repository
+	@echo " "
+	@echo Useful commands:
+	@echo $$git remote -v : lists URLs that Git has stored for remotes
+	@echo $$git remote add [shortname] [url] : to add remote
+	@echo $$ git push [remote-name] [branch-name] : to push repository to remote
+	@echo See http://git-scm.com/doc or
+	@echo http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
+
+.PHONY: git.status
+git.status:
+	${GIT} status
+
+.PHONY: git.commit
+git.commit:
+	${GIT} commit ${GIT_FLAGS}
+
+.PHONY: git.push
+git.fetch:
+	${GIT} push ${GIT_REMOTE}
+
+
 ## Course slides using knit/beamer ----------------------------------------
 
 ## Course slides, notes, etc etc using knitr
@@ -293,3 +370,4 @@ clean:
 .PHONY: backup
 backup:
 	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout
+
