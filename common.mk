@@ -18,6 +18,8 @@
 ##            2) Added stitch rules
 ##            Sat 2015-03-28 at 20:48:20
 ##            1) added version
+##            2) added git and rsync targets
+##            3) fixed some knitr/rmarkdown targets
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -79,6 +81,21 @@ RSYNC_FLAGS = -auvtr
 RSYNC_FILES = \*
 RSYNC_DRY_RUN = --dry-run
 
+## pandoc variables ---------------------------------------------
+
+PANDOC = pandoc
+PANDOC_OPTS = -s
+
+## R variables ---------------------------------------------
+
+R         = R
+RSCRIPT   = Rscript
+R_FLAGS   = CMD BATCH
+##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
+R_OPTS    = --vanilla
+RWEAVE    = $(R) CMD Sweave
+RWEAVE_FLAGS =
+
 ## R pattern rules -------------------------------------------------
 .PHONY: help-r
 help-r:
@@ -98,14 +115,6 @@ help-r:
 	@echo ".   only 'myFile.R'"
 	@echo "    So good practice is to use different names for reports and analysis"
 
-R         = R
-RSCRIPT   = Rscript
-R_FLAGS   = CMD BATCH
-##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
-R_OPTS    = --vanilla
-RWEAVE    = $(R) CMD Sweave
-RWEAVE_FLAGS =
-
 ## produce .Rout from .R file --------------------------------------
 
 ## Running R to produce text file output
@@ -118,18 +127,22 @@ RWEAVE_FLAGS =
 
 ## knit (and Sweave) pattern rules ----------------------------------
 
+## KNIT not used but now used as it is now called inside Rscript
+## note - may need to use this (or similar) instead if knit is not in path
 ## KNIT     = knit
+## KNIT     = /usr/lib/R/site-library/knitr/bin/knit
+## KNIT     = /usr/lib/R/library/knitr/bin/knit
 KNIT     = /usr/lib64/R/library/knitr/bin/knit
 KNIT_FLAGS = -n -o
-## note - may need to use this (or similar) instead if knit is not in path
-## KNIT = /usr/lib/R/library/knitr/bin/knit
 
+##%.R: %.Rnw
+##	${R} CMD Stangle $<
 %.R: %.Rnw
-	${R} CMD Stangle $<
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rnw}\")"
+%.R: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
 %.tex: %.Rnw
-	${KNIT} $< -n -o $@
-%.pdf: %.Rnw
-	${KNIT} $<
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
 %.pdf : %.tex
 	${LATEXMK} ${LATEXMK_FLAGS} $<
 ##	${RUBBER} ${RUB_FLAGS} $<
@@ -145,16 +158,20 @@ KNIT_FLAGS = -n -o
 ## explicit definitions?
 
 %.md: %.Rmd
-	${KNIT} $@ ${KNIT_OPTS} $<
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
+%.md: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
+##	${KNIT} $@ ${KNIT_OPTS} $<
 
 ## pandoc pattern rules  ----------------------------------------------
-
-PANDOC = pandoc
-PANDOC_OPTS = -s
 
 %.pdf: %.md
 	${PANDOC} ${PANDOC_OPTS} $< -o $@
 %.docx: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+%.html: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+%.tex: %.md
 	${PANDOC} ${PANDOC_OPTS} $< -o $@
 
 ## stitch an R file using knitr --------------------------------------

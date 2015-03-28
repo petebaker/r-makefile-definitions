@@ -2,7 +2,7 @@
 ## NB: $< doesn't seem to always work very well but ${@:.pdf=.Rmd} does
 
 .PHONY: all
-all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf test.tex knitr-minimal.R knitr-minimal.tex knitr-minimal.pdf
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
