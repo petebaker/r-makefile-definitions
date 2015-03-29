@@ -86,7 +86,8 @@ RSYNC_DESTINATION =
 ## RSYNC_DESTINATION = ~/ownCloud/myProject
 RSYNC = rsync
 RSYNC_FLAGS = -auvtr
-RSYNC_FILES = \*
+RSYNC_FILES_LOCAL = *
+RSYNC_FILES_REMOTE = *
 RSYNC_DRY_RUN = --dry-run
 
 ## pandoc variables ---------------------------------------------
@@ -233,24 +234,47 @@ help-rmarkdown:
 .PHONY: help-rsync
 help-rsync:
 	@echo ""
-	@echo Using rsync to backup selected files to local or remote destination
+	@echo Use rsync to backup files to/from local or remote destination
 	@echo ""
+	@echo "rsync local to remote:"
 	@echo $$ make rsynctest
 	@echo "  or"
 	@echo $$ make rsynccopy
-	@echo will either run rsync with \'--dry-run\' option to perform a trial run with no changes made
+	@echo ""
+	@echo "rsync remote to local:"
+	@echo $$ make rsynctest2here
+	@echo "  or"
+	@echo $$ make rsynccopy2here
+	@echo ""
+	@echo will either run rsync with \'--dry-run\' option to perform a
+	@echo trial run with no changes made
 	@echo " or"
 	@echo copy just those updated files to local/remote destination
 	@echo but your can change options with something like
-	@echo $$ RSYNC_DESTINATION=~/ownCloud/myProject make rsynctest
+	@echo $$ RSYNC_DESTINATION=~/ownCloud/myProject3 make rsynctest
+	@echo $$ RSYNC_DESTINATION=username@remote_host:/home/username/dir1 make rsynctest
+	@echo NB: rsync variables \(defaults in brackets\) are
+	@echo "    RSYNC_DESTINATION, RSYNC (rsync), RSYNC_FLAGS (-auvtr)"
+	@echo "    RSYNC_FILES_LOCAL (*), RSYNC_FILES_REMOTE (*) RSYNC_DRY_RUN (--dry-run)"
+	@echo See https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps
 
+
+## rsync local to remote
 .PHONY: rsynctest
 rsynctest:
-	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES}
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/.
 
 .PHONY: rsynccopy
 rsynccopy:
-	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES}
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/.
+
+.PHONY: rsynctest2here
+rsynctest2here:
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
+
+.PHONY: rsynccopy2here
+rsynccopy2here:
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
 
 ## git  -------------------------------------------------
 
@@ -263,7 +287,7 @@ help-git:
 	@echo $$ make git.commit
 	@echo "  or"
 	@echo $$ make git.fetch
-	@echo will either list changes via \'git status\', commit changes or push to remore repository
+	@echo will either list changes via \'git status\', commit changes or push to remote repository
 	@echo " "
 	@echo Useful commands:
 	@echo $$git remote -v : lists URLs that Git has stored for remotes

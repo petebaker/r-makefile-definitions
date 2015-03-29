@@ -30,3 +30,7 @@ include common.mk
 ##  first may produce a warning
 ## include c:/myLibrary/common.mk
 ## include /cygdrive/c/myLibrary/common.mk
+
+## uncomment for testing rsync
+##RSYNC_DESTINATION = ~/ownCloud/myProject
+##RSYNC_FILES = common.mk test.Rmd knitr-minimal.Rnw
