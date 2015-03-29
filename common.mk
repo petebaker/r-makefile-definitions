@@ -23,17 +23,25 @@
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
-##       3) sort out rough edges
-## Question: Should I always run 'knit -n -o' to get .tex and run
-##           through R CMD latexmk as that should specify dependencies
-##           properly but guessing pandoc a better bet in long run
+##          PARTIALLY DONE 2015-03-29 at 09:37:41
+##       3) generic clean/backup needs work (see end of file)
 
 ## For Sweave I've changed the default to knit as that's what I
-## usually want but to use Sweave then use the following three lines
-## at end of Makefile
-## include ~/lib/common.mk
-## KNIT    = $(R) CMD Sweave
-## KNIT_FLAGS = 
+## usually want but to use Sweave then uncomment appropriate lines below
+## KNIT not used but now used as it is now called inside Rscript
+## but could be changed if this way preferred
+## note - may need to use this (or similar) instead if knit is not in path
+## KNIT     = knit
+## KNIT     = /usr/lib/R/site-library/knitr/bin/knit
+## KNIT     = /usr/lib/R/library/knitr/bin/knit
+## KNIT     = /usr/lib64/R/library/knitr/bin/knit
+## KNIT_FLAGS = -n -o
+## %.md: %.Rmd
+##	${KNIT} $@ ${KNIT_OPTS} $<
+##%.tex: %.Rnw
+##	${R} CMD Sweave $<
+##%.R: %.Rnw
+##	${R} CMD Stangle $<
 
 ## program defs:
 ##MAKE      = make
@@ -43,16 +51,16 @@
 .PHONY: help
 help:
 	@echo ""
-	@echo Some simple help can be obtained with
+	@echo Simple help can be obtained with
 	@echo ""
 	@echo make help-r
 	@echo make help-rmarkdown
 	@echo make help-stitch
-	@echo make help-slides
+	@echo make help-beamer
 	@echo make help-git
 	@echo make help-rsync
 
-# latex pattern rules  ---------------------------------------------------
+# latex variables ---------------------------------------------------
 
 ## can be used to convert simple latex to .rtf file for MS word
 LATEX2RTF     = latex2rtf
@@ -107,12 +115,12 @@ help-r:
 	@echo but you can change options with something like
 	@echo $$ R_OPTS=--no-restore-history make myFile.R
 	@echo ""
-	@echo To stitch file \(like RStudio\) just do one of the following:
+	@echo To stitch file \(like RStudio\) just choose any or all of:
 	@echo make myFile.pdf
 	@echo make myFile.docx
 	@echo make myFile.html
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
-	@echo ".   only 'myFile.R'"
+	@echo "    only 'myFile.R'"
 	@echo "    So good practice is to use different names for reports and analysis"
 
 ## produce .Rout from .R file --------------------------------------
@@ -127,16 +135,6 @@ help-r:
 
 ## knit (and Sweave) pattern rules ----------------------------------
 
-## KNIT not used but now used as it is now called inside Rscript
-## note - may need to use this (or similar) instead if knit is not in path
-## KNIT     = knit
-## KNIT     = /usr/lib/R/site-library/knitr/bin/knit
-## KNIT     = /usr/lib/R/library/knitr/bin/knit
-KNIT     = /usr/lib64/R/library/knitr/bin/knit
-KNIT_FLAGS = -n -o
-
-##%.R: %.Rnw
-##	${R} CMD Stangle $<
 %.R: %.Rnw
 	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rnw}\")"
 %.R: %.Rmd
@@ -161,7 +159,6 @@ KNIT_FLAGS = -n -o
 	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
 %.md: %.rmd
 	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
-##	${KNIT} $@ ${KNIT_OPTS} $<
 
 ## pandoc pattern rules  ----------------------------------------------
 
@@ -176,7 +173,7 @@ KNIT_FLAGS = -n -o
 
 ## stitch an R file using knitr --------------------------------------
 
-## finding rmarkdown seems to be a better option than knitr  
+## find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easier to install
 
 .PHONY: help-stitch
@@ -296,21 +293,23 @@ git.push:
 ## basically needs a line at to of file with beamer options
 ## ~~MY~BEAMER~~OPTIONS~~  which gets changed for each different output type
 
-.PHONY: help-slides
-help-slides:
+.PHONY: help-beamer
+help-beamer:
 	@echo ""  
-	@echo Slide file types used in Makefile with knitr
-	@echo Note that base file is of form *-src.Rnw
-	@echo ""  
-	@echo "       %-Slides.\{tex,pdf\}: Slides for presentation"
-	@echo "       %-2a4.\{tex,pdf\}: Handouts - 2 slides per A4 page"
-	@echo "       %-4a4.\{tex,pdf\}: Handouts - 4 slides per A4 page"
-	@echo "       %-Notes.\{tex,pdf\}: Notes in article style - not slides"
+	@echo Beamer presentations and handouts produced with knitr
+	@echo Note that base file has name PRESENTATION-src.Rnw
+	@echo " where PRESENTATION is appropriate name for your presentation"
 	@echo ""
-	@echo "NB: %D.\{tex,pdf\}, %N.\{tex,pdf\} and  %H.\{tex,pdf\}"
-	@echo "    produced as intermediate files PREVIOUSLY"
-	@echo "NB2: Notes needs rewriting once courses over"
-	@echo "     since knitr does not like old method"
+	@echo Targets that may be produced:
+	@echo "   PRESENTATION-Present.pdf: Slides for presentation"
+	@echo "   PRESENTATION-Slides.pdf: 1 slide per page without transitions"
+	@echo "   PRESENTATION-2a4.pdf: Handouts - 2 slides per A4 page"
+	@echo "   PRESENTATION-4a4.pdf: Handouts - 4 slides per A4 page"
+	@echo "   PRESENTATION-syntax.R: R syntax file tangled from Rnw using knit"
+	@echo "   PRESENTATION-Notes.pdf: Notes in beamer article style"
+	@echo ""
+	@echo "NB: First line of PRESENTATION-src.Rnw is"
+	@echo "\\documentclass[~~MY~BEAMER~~OPTIONS~~]{beamer}"
 
 ## produce latex file with knitr but note that it does not have
 ## document class - perhaps it should and use perl etc to modify it
@@ -362,13 +361,14 @@ help-slides:
 	@echo "\\includepdf[nup=2x2,pages=-]{"$*"-Slides.pdf}" >> $@
 	@echo "\\end{document}" >> $@
 
-## Beamer style article - slight clash with todonotes
+## Beamer style article - if you experience slight clash with todonotes
+##                        or wish to add/remove styles modify here
 %-Notes.tex: %-src.tex
+	@echo "% to use packages uncomment appropriate line by removing %" > $@
 	@echo "%\\PassOptionsToPackage{override,tikz}{xcolor}" > $@
 	@echo "%\\PassOptionsToPackage{override,xcolor}{tikz}" > $@
 	@echo "%\\PassOptionsToPackage{override,xcolor}{todonotes}" > $@
 	@echo "%\\PassOptionsToPackage{override,xcolor}{beamer}" > $@
-	@echo "% best to comment todonotes as it just messes up" > $@
 	@echo "\\documentclass[a4paper]{article}" > $@
 	@echo "\\usepackage{beamerarticle}" >> $@
 	@echo "\\input{"$*-src"}" >> $@
@@ -379,7 +379,7 @@ help-slides:
 
 ## housekeeping which needs improving - especially backup (.tgz or
 ## .zip file?)  but this won't work without extra directories etc
-## etc needs some checking and thought
+## needs some checking and thought
 
 .PHONY: clean
 clean: 
