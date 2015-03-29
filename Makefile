@@ -1,5 +1,4 @@
-## test of using make only - no bash script
-## NB: $< doesn't seem to always work very well but ${@:.pdf=.Rmd} does
+## Example Makefile
 
 .PHONY: all
 all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf test.tex knitr-minimal.R knitr-minimal.tex knitr-minimal.pdf
@@ -14,7 +13,7 @@ test2.pdf: ${@:.pdf=.rmd}
 
 ## produce .Rout file - note that this is standard so does not need
 ##                      to be added unless more dependencies than the .R file
-## test-stitch.Rout: ${@:.Rout=.R}
+test-stitch.Rout: ${@:.Rout=.R}
 
 ## use stitch to produce pdf via rmarkdown (exactly as in RStudio)
 test-stitch.pdf: ${@:.pdf=.R}

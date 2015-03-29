@@ -185,8 +185,8 @@ help-stitch:
 	@echo make myFile.docx
 	@echo make myFile.html
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
-	@echo ".   only 'myFile.R'"
-	@echo "    So good practice is to use different names for reports and analysis"
+	@echo "    only 'myFile.R' So good practice is to use different"
+	@echo "    file (base)names for reports and analysis"
 
 %.pdf: %.R
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", \"pdf_document\")"
