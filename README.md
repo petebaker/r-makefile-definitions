@@ -30,8 +30,26 @@ Using common.mk
    this would something like:
    - ~/lib or C:\MyLibrary
 2. put the following line in your Makefile
-   - include ~/lib/cpmmon.mk where ~ will be expanded to be your HOME directory, or
+   - include ~/lib/common.mk where ~ will be expanded to be your HOME directory, or
    - include C:/MyLibrary/common.mk (in windows)
+
+**Note:** the very simplest way to run make would be to simply create
+a new text file named *Makefile* in your working directory with a
+single line above including the file *common.mk*. If you have an R
+syntax file named say mySpecialAnalysis.R then, in a terminal, you can
+run *R* to produce an output file by typing 'make
+mySpecialAnalysis.Rout' or produce a notebook using *Rmarkdown* by
+typing 'make mySpecialAnalysis.pdf'.
+
+However, you will miss out on the power of make which you can harness by describing the dependencies among files.
+
+To actually use these rules in practice, we may have several prerequisite files like an R syntax file and several data files. In the Makefile we may specify the dependencies as
+
+```make
+readData.Rout: readData.R data1.csv data2.csv oldData.RData
+```
+
+so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’.
 
 Example Makefiles
 ==============
@@ -56,7 +74,9 @@ include common.mk
 ##include ~/lib/common.mk
 ```
 
-More usually, if there is a seqence of steps relying on a data file
+Note that you can then
+
+More usually, if there is a sequence of steps relying on a data file
 myData.csv your Makefile may look something like
 
 ```make
