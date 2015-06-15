@@ -20,6 +20,8 @@
 ##            1) added version
 ##            2) added git and rsync targets
 ##            3) fixed some knitr/rmarkdown targets
+##            2015-06-16 at 08:50:37
+##            1) Added rmarkdown pdf options to drop pdfcrop etc
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -177,6 +179,8 @@ help-r:
 ## find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easier to install
 
+RMARKDOWN_PDF_OPTS =  (fig_crop=FALSE, fig_caption = TRUE)
+
 .PHONY: help-stitch
 help-stitch:
 	@echo ""
@@ -189,7 +193,7 @@ help-stitch:
 	@echo "    file (base)names for reports and analysis"
 
 %.pdf: %.R
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", \"pdf_document\")"
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.html: %.R
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", \"html_document\")"
 ## this borrows line from below
@@ -215,9 +219,9 @@ help-rmarkdown:
 	@echo '   b\) replace \"pdf_document\" with \"all\"'
 
 %.pdf: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", \"pdf_document\")"
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", \"pdf_document\")"
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.html: %.Rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
 %.html: %.rmd
