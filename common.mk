@@ -7,6 +7,9 @@
 ##         To override any definitions place them after the include statement
 ## NB: if using makepp then ~ is not recognized but the following is OK
 ##         include ${HOME}/lib/common.mk
+##
+##   The latest version of this file is available at
+##   https://github.com/petebaker/r-makefile-definitions
 
 ## For help after including common.mk in Makefile: run
 ##         $  make help
