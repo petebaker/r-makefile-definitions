@@ -1,6 +1,8 @@
 R related Makefile definitions
 =============
 
+Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
+
 **GNU Make** is a commonly used tool as part of the process for
   managing software projects.
 

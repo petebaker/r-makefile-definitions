@@ -1,6 +1,6 @@
 ## File:    common.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.01
+## Version: 0.2.02
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -25,6 +25,9 @@
 ##            3) fixed some knitr/rmarkdown targets
 ##            2015-06-16 at 08:50:37
 ##            1) Added rmarkdown pdf options to drop pdfcrop etc
+##            2015-09-07 at 17:55:27
+##            1) fixed 'make help-r' which referred to myFile.R rather than .Rouit
+##            2) added link to blog site
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -116,10 +119,10 @@ help-r:
 	@echo ""
 	@echo Just one major rule to produce .Rout but can stitch .R file too
 	@echo ""
-	@echo $$ make myFile.R
+	@echo $$ make myFile.Rout
 	@echo will produce 'myFile.Rout' using R CMD BATCH --vanilla myFile.R
 	@echo but you can change options with something like
-	@echo $$ R_OPTS=--no-restore-history make myFile.R
+	@echo $$ R_OPTS=--no-restore-history make myFile.Rout
 	@echo ""
 	@echo To stitch file \(like RStudio\) just choose any or all of:
 	@echo make myFile.pdf
@@ -127,7 +130,7 @@ help-r:
 	@echo make myFile.html
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
 	@echo "    only 'myFile.R'"
-	@echo "    So good practice is to use different names for reports and analysis"
+	@echo "    So good practice is to use different (base)names for reports and analysis"
 
 ## produce .Rout from .R file --------------------------------------
 
@@ -179,7 +182,7 @@ help-r:
 
 ## stitch an R file using knitr --------------------------------------
 
-## find that rmarkdown seems to be a better option than knitr  
+## I find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easier to install
 
 RMARKDOWN_PDF_OPTS =  (fig_crop=FALSE, fig_caption = TRUE)
