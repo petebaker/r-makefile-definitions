@@ -1,6 +1,8 @@
 R related Makefile definitions
 =============
 
+Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
+
 **GNU Make** is a commonly used tool as part of the process for
   managing software projects.
 
@@ -74,10 +76,17 @@ include common.mk
 ##include ~/lib/common.mk
 ```
 
-Note that you can then
+You can then run this with the command **make** or **make all** at the
+shell prompt. Any target that is not up to date will be created by
+running the appropriate commands. Even better: set up *RStudio* or
+your favourite editor to do this at the press of a button. Note also
+that because of the rules defined in *common.mk*, you can use make to
+produce targets not actually defined in the *Makefile*. For instance,
+to use stitch to create pdf output *newAnalysis.pdf* from the file
+*newAnalysis.R* simply type **make newAnalysis.pdf** at the prompt.
 
 More usually, if there is a sequence of steps relying on a data file
-myData.csv your Makefile may look something like
+*myData.csv* your Makefile may look something like
 
 ```make
 .PHONY:	all
