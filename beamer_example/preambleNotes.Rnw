@@ -1,0 +1,23 @@
+%% File: preambleNotes.Rnw
+%% What: Will be inserted at top of beamer .Rnw file
+%%       to produce presentation pdf
+%% Note: either 
+%%       1) insert presentation specific packages below \documentlass 
+%%          line, or
+%%       2) use \mode<notes>{ % presentation options here
+%%                \usepackage{...}
+%%                \usepackge[..]{...}}
+
+%% presentation  with notes -----------------------------------------
+%%\documentclass[ignorenonframetext,compress,presentation]{beamer}
+
+\documentclass[ignorenonframetext,presentation]{beamer}
+%%\usepackage{beamerthemebars} % creates the pretty bars and links
+
+%% for notes
+%% see 
+%%http://tex.stackexchange.com/questions/21777/is-there-a-nice-solution-to-get-a-presenter-mode-for-latex-presentations
+
+\usepackage{pgfpages}
+\setbeamertemplate{note page}[plain]
+\setbeameroption{show notes on second screen=right}

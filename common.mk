@@ -1,6 +1,6 @@
 ## File:    common.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.02
+## Version: 0.2.9000
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -28,10 +28,14 @@
 ##            2015-09-07 at 17:55:27
 ##            1) fixed 'make help-r' which referred to myFile.R rather than .Rouit
 ##            2) added link to blog site
+##            2016-05-19 at 11:58:34
+##            1) modified beamer from .Rnw to be more generic
+##            2) added beamer example and preamble .Rnw files
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
 ##          PARTIALLY DONE 2015-03-29 at 09:37:41
+##          DONE 2016-06-19 at 18:45:02
 ##       3) generic clean/backup needs work (see end of file)
 
 ## For Sweave I've changed the default to knit as that's what I
@@ -150,12 +154,12 @@ help-r:
 	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
 %.tex: %.Rnw
 	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
+## Not sure if this conflicts  ----- START
 %.pdf : %.tex
-	${LATEXMK} ${LATEXMK_FLAGS} $<
-##	${RUBBER} ${RUB_FLAGS} $<
-## %.pdf: %.Rnw
-## 	${RWEAVE} ${RW_FLAGS} $<
-## 	${RUBBER} ${RUB_FLAGS} $<
+	${RSCRIPT} ${R_OPTS} ${LATEXMK} ${LATEXMK_FLAGS} $<
+## Not sure if this conflicts  ----- END
+%.pdf: %.Rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
 
 %.rtf: %.tex
 	${LATEX2RTF} ${L2R_FLAGS} ${@:.rtf=}
@@ -183,7 +187,7 @@ help-r:
 ## stitch an R file using knitr --------------------------------------
 
 ## I find that rmarkdown seems to be a better option than knitr  
-## both on CRAN now so easier to install
+## both on CRAN now so easy to install
 
 RMARKDOWN_PDF_OPTS =  (fig_crop=FALSE, fig_caption = TRUE)
 
@@ -319,97 +323,93 @@ git.push:
 	${GIT} push ${GIT_ORIGIN} ${GIT_REMOTE}
 
 
-## Course slides using knit/beamer ----------------------------------------
-
-## Course slides, notes, etc etc using knitr
-## Based on Douglas Bates lme course notes course code
-## but added the slides/article styles as per happymutant website
-## basically needs a line at to of file with beamer options
-## ~~MY~BEAMER~~OPTIONS~~  which gets changed for each different output type
+## Course slides/presentations using knit/beamer ------------------------
 
 .PHONY: help-beamer
 help-beamer:
 	@echo ""  
-	@echo Beamer presentations and handouts produced with knitr
-	@echo Note that base file has name PRESENTATION-src.Rnw
-	@echo " where PRESENTATION is appropriate name for your presentation"
+	@echo Beamer presentations, articles and handouts produced with knitr
+	@echo ""
+	@echo "    The main file has name PRESENTATION.Rnw"
+	@echo "    for instance, for myTalk.Rnw, then replace PRESENTATION with myTalk"
+	@echo "NB: Do not include \\documentclass[...]{beamer} in main file"
 	@echo ""
 	@echo Targets that may be produced:
 	@echo "   PRESENTATION-Present.pdf: Slides for presentation"
-	@echo "   PRESENTATION-Slides.pdf: 1 slide per page without transitions"
-	@echo "   PRESENTATION-2a4.pdf: Handouts - 2 slides per A4 page"
-	@echo "   PRESENTATION-4a4.pdf: Handouts - 4 slides per A4 page"
+	@echo "   PRESENTATION-Notes.pdf: Slides for presentation with speaker notes"
+	@echo "   PRESENTATION-Article.pdf: Article using 'beamerarticle' style"
+	@echo "   PRESENTATION-Handout.pdf: 1 slide/page without transitions"
+	@echo "   PRESENTATION-2up.pdf: Handouts - 2 per A4 page"
+	@echo "   PRESENTATION-3up.pdf:            3 per A4 page"
+	@echo "   PRESENTATION-4up.pdf:            4 per A4 page"
+	@echo "   PRESENTATION-6up.pdf:            6 per A4 page"
 	@echo "   PRESENTATION-syntax.R: R syntax file tangled from Rnw using knit"
-	@echo "   PRESENTATION-Notes.pdf: Notes in beamer article style"
 	@echo ""
-	@echo "NB: First line of PRESENTATION-src.Rnw is"
-	@echo "\\documentclass[~~MY~BEAMER~~OPTIONS~~]{beamer}"
+	@echo "NB: Do not put \\documentclass declaration in main .Rnw file"
+	@echo "\\documentclass{} declaration obtained from files"
+	@echo "      preamble{Present,Article,Notes,Handout}.Rnw"
+	@echo "    Preamble files can be set with variables BEAMER_PRESENT etc"
+	@echo " eg. $$ BEAMER_PRESENT=~/lib/preamble.Rnw make myTalk_Present.pdf"
 
-## produce latex file with knitr but note that it does not have
-## document class - perhaps it should and use perl etc to modify it
-%-src.tex: %-src.Rnw
+## produce latex file with knit and pdf (via pdflatex) with knit2pdf
+## but note that it does not have document class - knitr is then
+## likely to use article if preamble is not used
 
-## Presentation pdf - produced via R CMD latexmk ...
-## %-Slides.pdf requires %-src.Rnw WITHOUT  \documentclass top line
-# %-Present.tex: %-src.tex
-# 	@echo "\\documentclass[dvipsnames,pdflatex,ignorenonframetext]{beamer}" > $@
-# 	@echo "\\input{"$*-src"}" >> $@
-# 	@echo "\\end{document}" >> $@
+## use knitr, latex and pdfjam to produce output  ------------------------
 
-## Presentation pdf - produced via R CMD latexmk ...
-## %-Slides.pdf requires %-src.Rnw WITHOUT  \documentclass top line
-%-Present.Rnw: %-src.Rnw
-	sed -e s/~~MY~BEAMER~~OPTIONS~~/dvipsnames,pdflatex,ignorenonframetext/g $< > $@
+## variables which can be overridden
+BEARMER_LIB = ~/lib/beamerPreamble/
+##BEAMER_LIB = ""
+BEAMER_PRESENT = ${BEAMER_LIB}preamblePresent.Rnw
+BEAMER_HANDOUT = ${BEAMER_LIB}preambleHandout.Rnw
+BEAMER_ARTICLE = ${BEAMER_LIB}preambleArticle.Rnw
+BEAMER_NOTES = ${BEAMER_LIB}preambleNotes.Rnw
+PDFJAM_4UP = --nup 2x2 --frame true --landscape --scale 0.92
+PDFJAM_2UP = --nup 1x2 --frame true --no-landscape --scale 0.92
+PDFJAM_3UP = --no-landscape
+PDFJAM_6UP = --no-landscape
 
-## Presentation syntax
-%-syntax.R: %-src.Rnw
-	R -e 'library(knitr);knit("$<", tangle=TRUE)'
-	mv ${<:.Rnw=.R} $@
+## Beamer presentation pdf
+%_Present.Rnw: %.Rnw $(BEAMER_PRESENT)
+	cat $(BEAMER_PRESENT) $< > $@
+%_Present.pdf: %_Present.Rnw
+	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
 
-## Slides - one per page - produced via R CMD latexmk ...
-## dropped handout option!
-%-Slides.tex: %-Present.tex
-	sed -e s/dvipsnames,pdflatex,ignorenonframetext/ignorenonframetext,dvipsnames,pdflatex,handout/g $< > $@
+## Beamer presentation with notes pdf (notes show on second screen)
+%_Notes.Rnw: %.Rnw $(BEAMER_NOTES)
+	cat $(BEAMER_NOTES) $< > $@
+%_Notes.pdf: %_Notes.Rnw
+	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
 
-##%-Slides.tex: %-src.tex
-##	@echo "\\documentclass[ignorenonframetext,dvipsnames,pdflatex,handout]{beamer}" > $@
-##	@echo "\\input{"$*-src"}" >> $@
-##	@echo "\\end{document}" >> $@
+## produce Article pdf (slides usually not framed but can be)
+%_Article.Rnw: %.Rnw $(BEAMER_ARTICLE)
+	cat $(BEAMER_ARTICLE) $< > $@
+%_Article.pdf: %_Article.Rnw
+	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
 
-# A4 paper - 2 per slides page
-%-2a4.tex: %-Slides.pdf
-	@echo "\\documentclass[a4paper]{article}" > $@
-	@echo "\\usepackage{pdfpages}" >> $@
-#	@echo "\\usepackage{pgfpages}" >> $@
-#	@echo "\\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]" >> $@
-	@echo "\\begin{document}" >> $@
-	@echo "\\includepdf[nup=1x2,pages=-]{"$*"-Slides.pdf}" >> $@
-#	@echo "\\includepdf{"$*"H.pdf}" >> $@
-	@echo "\\end{document}" >> $@
+## Handout - single slide on a landscape page pdf
+%_Handout.Rnw: %.Rnw $(BEAMER_HANDOUT)
+	cat $(BEAMER_HANDOUT) $< > $@
+%_Handout.pdf: %_Handout.Rnw
+	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
 
-# A4 paper - 4 slides per page
-%-4a4.tex: %-Slides.pdf
-	@echo "\\documentclass[a4paper,landscape]{article}" > $@
-	@echo "\\usepackage{pdfpages}" >> $@
-	@echo "\\begin{document}" >> $@
-	@echo "\\includepdf[nup=2x2,pages=-]{"$*"-Slides.pdf}" >> $@
-	@echo "\\end{document}" >> $@
+## Handouts: various - multiple slides per page using pdfjam - calls
+##           latex pgfpages in background
+%-4up.pdf: %_Handout.pdf
+	pdfjam -o $@ ${PDFJAM_4UP} $<
 
-## Beamer style article - if you experience slight clash with todonotes
-##                        or wish to add/remove styles modify here
-%-Notes.tex: %-src.tex
-	@echo "% to use packages uncomment appropriate line by removing %" > $@
-	@echo "%\\PassOptionsToPackage{override,tikz}{xcolor}" > $@
-	@echo "%\\PassOptionsToPackage{override,xcolor}{tikz}" > $@
-	@echo "%\\PassOptionsToPackage{override,xcolor}{todonotes}" > $@
-	@echo "%\\PassOptionsToPackage{override,xcolor}{beamer}" > $@
-	@echo "\\documentclass[a4paper]{article}" > $@
-	@echo "\\usepackage{beamerarticle}" >> $@
-	@echo "\\input{"$*-src"}" >> $@
-	@echo "\\end{document}" >> $@
+%-2up.pdf: %_Handout.pdf
+	pdfjam -o $@ ${PDFJAM_2UP} $<
 
-## Housekeeping rules ---------------------------------------------------
+%-6up.pdf: %_Handout.pdf
+	pdfjam-slides6up -o $@ $(PDFJAM_6UP) $< 
 
+%-3up.pdf: %_Handout.pdf
+	pdfjam-slides3up -o $@ $(PDFJAM_3UP) $<
+
+## extract R syntax using knitr::purl
+%-syntax.R: %.Rnw
+	Rscript --vanilla -e 'library(knitr);purl("$<", out="$@")'
 
 ## housekeeping which needs improving - especially backup (.tgz or
 ## .zip file?)  but this won't work without extra directories etc

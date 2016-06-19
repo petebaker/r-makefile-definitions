@@ -1,0 +1,33 @@
+%% File: preambleArticle.Rnw
+%% What: Will be inserted at top of beamer .Rnw file
+%%       to produce presentation pdf
+%% Note: either 
+%%       1) insert article specific packages below \documentlass 
+%%          line, or
+%%       2) use \mode<article>{ % presentation options here
+%%                \usepackage{...}
+%%                \usepackge[..]{...}}
+%%       or a combination of both
+
+%% article  --------------------------------------------------
+\documentclass{article} % class of presentation document
+\usepackage{beamerarticle}
+%%\documentclass[11pt]{article} % class of presentation document
+%%\usepackage{beamerarticle}
+
+%% set the frame title to work in presentation and article
+\usepackage{marginnote}
+\setbeamertemplate{frametitle}{\marginnote{\insertframetitle}}
+
+%% From Section '21.2.2 Workflow' of Beamer Userguide (texdoc beamer)
+%% but here we use make (which requires unix cat and possibly pdfjam)
+
+%% The command \setjobnamebeamerversion tells the article version
+%% where to find the presentation version.  This is necessary if you
+%% wish to include slides from the presentation version in an article
+%% as figures.
+
+%% \setjobnamebeamerversion{⟨filename without extension⟩}
+
+%% Tells the beamer class where to find the presentation version of
+%% the current file.

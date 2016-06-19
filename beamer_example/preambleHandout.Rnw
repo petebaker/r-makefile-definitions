@@ -1,0 +1,16 @@
+%% File: preambleHandout.Rnw
+%% What: Will be inserted at top of beamer .Rnw file
+%%       to produce presentation pdf
+%% Note: either 
+%%       1) insert presentation specific packages below \documentlass 
+%%          line, or
+%%       2) use \mode<handout>{ % presentation options here
+%%                \usepackage{...}
+%%                \usepackge[..]{...}}
+
+%% presentation  ---------------------------------------------
+%%\documentclass[ignorenonframetext,compress,handout]{beamer}
+
+\documentclass[ignorenonframetext,handout]{beamer}
+%%\usepackage{beamerthemebars} % creates the pretty bars and links
+
