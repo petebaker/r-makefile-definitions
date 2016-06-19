@@ -118,12 +118,12 @@ Prerequisites
 To use these makefile definitions you need to install
 - GNU Make  http://www.gnu.org/software/make/
 - R         http://www.r-project.org/
-- latexmk   http://http://www.ctan.org/pkg/latexmk/
 - R packages on CRAN: rmarkdown, knitr
-
-Note that Windows users can install Rtools (available from CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
-- Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - pandoc   http://johnmacfarlane.net/pandoc/
+- latexmk   http://http://www.ctan.org/pkg/latexmk/
+
+Note that *Windows* users can install *Rtools* (available via CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
+- Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
 
 Notes
