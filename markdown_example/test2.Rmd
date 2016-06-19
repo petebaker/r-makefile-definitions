@@ -1,0 +1,36 @@
+---
+title: "Example2"
+author: "Peter Baker"
+date: "17 June 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmarkdown)
+##knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r summary, echo = TRUE}
+kable(head(mtcars[,1:6]))
+```
+
+## Slide with Plot
+
+```{r plot1, results='asis'}
+plot(disp ~ hp, data=mtcars)
+```
