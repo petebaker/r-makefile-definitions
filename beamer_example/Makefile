@@ -9,11 +9,12 @@ all: b1_Present.pdf b1_Notes.pdf b1_Article.pdf b1-2up.pdf b1-3up.pdf b1-4up.pdf
 ## include ~/lib/common.mk
 include ../common.mk
 
-## NB: by default I put these files in ~/lib/beamerPreamble so I know where
-##     latest version is
-##     Could also use BEARMER_LIB = "."
-##     which can set since I use
-##                    BEARMER_LIB = ~/lib/beamerPreamble
+## NB: by default I put these preamble .Rnw files in ~/lib/beamerPreamble so
+##     I know where the latest versions are
+##     Could also use BEAMER_LIB = ./ or BEAMER_LIB=
+##     which can be set since I use
+##                    BEAMER_LIB = ~/lib/beamerPreamble
+## BEAMER_LIB=
 BEAMER_PRESENT = preamblePresent.Rnw
 BEAMER_HANDOUT = preambleHandout.Rnw
 BEAMER_ARTICLE = preambleArticle.Rnw

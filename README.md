@@ -71,6 +71,9 @@ test2.pdf: ${@:.pdf=.rmd}
 ## use stitch to produce pdf via rmarkdown (exactly as in RStudio)
 test-stitch.pdf: ${@:.pdf=.R}
 
+## use beamer to produce a presentation from .Rnw file
+myTalk_Present.pdf: myTalk.Rnw
+
 ## if you have common.mk in ~/lib directory uncomment line below and comment
 include common.mk
 ##include ~/lib/common.mk
@@ -122,3 +125,5 @@ Notes
 =======
 
 Definitions in 'common.mk' have been developed and tested on linux and tested on windows. Some tweaking may be required.
+
+Once you have a Makefile which includes common.mk you can type 'make help' at the command prompt for further information. 

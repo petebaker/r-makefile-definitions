@@ -358,7 +358,7 @@ help-beamer:
 ## use knitr, latex and pdfjam to produce output  ------------------------
 
 ## variables which can be overridden
-BEARMER_LIB = ~/lib/beamerPreamble/
+BEAMER_LIB = ~/lib/beamerPreamble/
 ##BEAMER_LIB = ""
 BEAMER_PRESENT = ${BEAMER_LIB}preamblePresent.Rnw
 BEAMER_HANDOUT = ${BEAMER_LIB}preambleHandout.Rnw
