@@ -1,6 +1,6 @@
 ## File:    common.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9000
+## Version: 0.2.9001
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -15,22 +15,26 @@
 ##         $  make help
 
 ## Changelog: None recorded until Frid 2015-02-06 at 15:40:21
-##            On Frid 2015-02-06
+##          On Frid 2015-02-06
 ##            1) Added Rmarkdown rules
 ##               run $ make help-rmarkdown
 ##            2) Added stitch rules
-##            Sat 2015-03-28 at 20:48:20
+##          Sat 2015-03-28 at 20:48:20
 ##            1) added version
 ##            2) added git and rsync targets
 ##            3) fixed some knitr/rmarkdown targets
-##            2015-06-16 at 08:50:37
+##          2015-06-16 at 08:50:37
 ##            1) Added rmarkdown pdf options to drop pdfcrop etc
-##            2015-09-07 at 17:55:27
-##            1) fixed 'make help-r' which referred to myFile.R rather than .Rouit
+##          2015-09-07 at 17:55:27
+##            1) fixed 'make help-r' which referred to myFile.R rather
+##               than .Rouit
 ##            2) added link to blog site
-##            2016-05-19 at 11:58:34
+##          2016-05-19 at 11:58:34
 ##            1) modified beamer from .Rnw to be more generic
 ##            2) added beamer example and preamble .Rnw files
+##          2016-06-19 at 23:27:34
+##            1) added in various 'rmarkdown' outputs like ioslides,
+##               slidy, beamer, tufte, rtf, odt
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -66,8 +70,8 @@ help:
 	@echo Simple help can be obtained with
 	@echo ""
 	@echo make help-r
-	@echo make help-rmarkdown
 	@echo make help-stitch
+	@echo make help-rmarkdown
 	@echo make help-beamer
 	@echo make help-git
 	@echo make help-rsync
@@ -146,55 +150,17 @@ help-r:
 	${R} ${R_FLAGS} ${R_OPTS} $< 
 ##	@echo Job $<: finished at `date`
 
-## knit (and Sweave) pattern rules ----------------------------------
-
-%.R: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rnw}\")"
-%.R: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
-%.tex: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
-## Not sure if this conflicts  ----- START
-%.pdf : %.tex
-	${RSCRIPT} ${R_OPTS} ${LATEXMK} ${LATEXMK_FLAGS} $<
-## Not sure if this conflicts  ----- END
-%.pdf: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
-
-%.rtf: %.tex
-	${LATEX2RTF} ${L2R_FLAGS} ${@:.rtf=}
-
-## wonder if this would cause a conflict with rmarkdown - shouldn't as
-## long as R markdown rules come after this and possible override with
-## explicit definitions?
-
-%.md: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
-%.md: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
-
-## pandoc pattern rules  ----------------------------------------------
-
-%.pdf: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.docx: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.html: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.tex: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-
 ## stitch an R file using knitr --------------------------------------
 
 ## I find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easy to install
 
-RMARKDOWN_PDF_OPTS =  (fig_crop=FALSE, fig_caption = TRUE)
+RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE)
 
 .PHONY: help-stitch
 help-stitch:
 	@echo ""
-	@echo To stitch file \(like RStudio\) just do one of the following:
+	@echo To stitch file \(like RStudio\) from a .R file, just do one of the following:
 	@echo make myFile.pdf
 	@echo make myFile.docx
 	@echo make myFile.html
@@ -204,47 +170,156 @@ help-stitch:
 
 %.pdf: %.R
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+%.pdf: %.r
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.html: %.R
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", \"html_document\")"
+%.html: %.r
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", \"html_document\")"
 ## this borrows line from below
 %.docx: %.R
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", \"word_document\")"
+%.docx: %.r
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", \"word_document\")"
+
+## knit and rmarkdown pattern rules ----------------------------------
+
+## produce R syntax from .rnw or .Rmd files
+%.R: %.Rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rnw}\")"
+%.R: %.rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.rnw}\")"
+%.R: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
+%.R: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.rmd}\")"
+
+## wonder if this would cause a conflict with rmarkdown - shouldn't as
+## long as R markdown rules come after this and possible override with
+## explicit definitions?
+%.md: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
+%.md: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
+
+## pandoc pattern rules 
+%.pdf: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+%.docx: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+%.html: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+%.tex: %.md
+	${PANDOC} ${PANDOC_OPTS} $< -o $@
+
+## tex file from .Rnw
+%.tex: %.Rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
+%.tex: %.rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
+
+## Not sure if this conflicts  ----- START
+%.pdf : %.tex
+	${RSCRIPT} ${R_OPTS} ${LATEXMK} ${LATEXMK_FLAGS} $<
+
+## best to go to .pdf directly rather tahn creating .tex file
+%.pdf: %.Rnw
+	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+## Not sure if this conflicts  ----- END
+
+## Uses latex2rtf but perhaps should use markdown/pandoc as better 
+%.rtf: %.tex
+	${LATEX2RTF} ${L2R_FLAGS} ${@:.rtf=}
 
 ## Rmarkdown pattern rules  --------------------------------------------------
 
 ## generating pdf, docx, html other from Rmarkdown/sweave
 ## Note: $< does not appear to work whereas ${@:.pdf=.Rmd} does even
 ##       though I think they should be identical
+
 .PHONY: help-rmarkdown
 help-rmarkdown:
 	@echo ""
-	@echo You can easily set up a .PHONY target to produce all output
-	@echo format files specified at the top of the .Rmd file
-	@echo See the file ~/lib/common.mk file and simply
-	@echo 1\) set up a phony target with something like
-	@echo .PHONY: rmarkdown-all
-	@echo rmarkdown-all: myfile.Rmd
-	@echo 2\) insert an Rscript command eg.
-	@echo '   a\) insert pdf command from ~/lib/common.mk'
-	@echo '   b\) replace \"pdf_document\" with \"all\"'
+	@echo "Using R Markdown/knitr to automatically produce output from .Rmd"
+	@echo ''
+	@echo Rules to make output using $$ make myFile.XXX:
+	@echo "    .pdf (via latex)"
+	@echo "    .html"
+	@echo "    .docx (Microsoft Word)"
+	@echo "    .odt (open/libre office document)"
+	@echo "    .rtf (rich text format)"
+	@echo "    BASENAME_ioslides.html from BASENAME.Rmd eg $$ make myFile_ioslides.html"
+	@echo "    BASENAME_slidy.html from BASENAME.Rmd"
+	@echo "    BASENAME_beamer.pdf from BASENAME.Rmd (beamer presentation)"
+	@echo "    BASENAME_tufte.pdf from BASENAME.Rmd (tufte beamer handouts)"
+	@echo ""
+	@echo NB: You can easily set up a .PHONY target in \'Makefile\' to produce all
+	@echo "    output format files specified at the top of the .Rmd file"
+	@echo "    Set up a phony target with something like"
+	@echo "      .PHONY: rmarkdown-all"
+	@echo "      rmarkdown-all: myfile.Rmd"
+	@echo "    then typing the following at the command prompt"
+	@echo '    $$ make rmarkdown-all'
+	@echo "    produces all formats defined in YAML header for 'myfile.Rmd'"
 
+## .pdf from .Rmd (via latex)
 %.pdf: %.Rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+## uncomment next line if required for debugging latex 
+## .PRECIOUS: .tex 
+
+## .html from .Rmd
 %.html: %.Rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
 %.html: %.rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", \"html_document\")"
+
+## .docx from .Rmd
 %.docx: %.Rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", \"word_document\")"
 %.docx: %.rmd
 	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", \"word_document\")"
 
-## uncomment next line if required for debugging latex 
-## .PRECIOUS: .tex 
+## open office/libre office document format
+%.odt: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", \"odt_document\")"
+%.odt: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", \"odt_document\")"
+
+## rich text format from rmd
+%.rtf: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", \"rtf_document\")"
+%.rtf: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", \"rtf_document\")"
+
+## ioslides presentation
+%_ioslides.html: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.Rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+%_ioslides.html: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+
+## slidy presentation
+%_slidy.html: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.Rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+%_slidy.html: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+
+## beamer presentation
+%_beamer.pdf: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.Rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+%_beamer.pdf: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+
+## tufte handout format (NB: first install.packages("tufte", dep=T))
+%_tufte.pdf: %.Rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.Rmd}\", \"tufte_handout\", output_file = \"$@\")"
+%_tufte.pdf: %.rmd
+	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", \"tufte_handout\", output_file = \"$@\")"
 
 ## backup using rsync -------------------------------------------------
+
 .PHONY: help-rsync
 help-rsync:
 	@echo ""
