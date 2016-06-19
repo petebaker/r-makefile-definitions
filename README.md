@@ -63,7 +63,8 @@ Example Makefiles
 
 ```make
 .PHONY : all
-all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf \
+     myTalk_ioslides.html myTalk_beamer.pdf myTalk_Present.pdf
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
@@ -76,7 +77,11 @@ test2.pdf: ${@:.pdf=.rmd}
 ## use stitch to produce pdf via rmarkdown (exactly as in RStudio)
 test-stitch.pdf: ${@:.pdf=.R}
 
-## use beamer to produce a presentation from .Rnw file
+## produce a beamer & ioslides presentation from .Rmd file
+myTalk_ioslides.html: myTalk.Rmd
+myTalk_beamer.pdf: myTalk.Rmd
+
+## produce a beamer presentation from .Rnw file
 myTalk_Present.pdf: myTalk.Rnw
 
 ## if you have common.mk in ~/lib directory uncomment line below and comment
