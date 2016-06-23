@@ -1,6 +1,6 @@
 ## File:    common.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9001
+## Version: 0.2.9004
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/common.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -27,7 +27,7 @@
 ##            1) Added rmarkdown pdf options to drop pdfcrop etc
 ##          2015-09-07 at 17:55:27
 ##            1) fixed 'make help-r' which referred to myFile.R rather
-##               than .Rouit
+##               than .Rout
 ##            2) added link to blog site
 ##          2016-05-19 at 11:58:34
 ##            1) modified beamer from .Rnw to be more generic
@@ -35,6 +35,15 @@
 ##          2016-06-19 at 23:27:34
 ##            1) added in various 'rmarkdown' outputs like ioslides,
 ##               slidy, beamer, tufte, rtf, odt
+##          2016-06-23 at 16:23:57 (Version 0.2.9004)
+##            1) fixed Rscript --vanilla R CMD --vanilla bug for latexmk
+##            2) added variables for programs like cat, rm, pdfjam,
+##               latexmk to include PROG_OPTS to set options
+##               and LATEXMK_PRE which can be prepended to latex
+##            3) changed outputting R syntax from .Rmd and .Rnw files
+##               to produce -syntax.R to avoid dependency loops where
+##               a .tex file then .pdf might be produced instead
+##               of using rmarkdown 
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -81,12 +90,22 @@ help:
 ## can be used to convert simple latex to .rtf file for MS word
 LATEX2RTF     = latex2rtf
 
-## cross platform way to run latex properly but best to run through R
-LATEXMK       = $(R) CMD latexmk
+## cross platform way to run latex but may also run through R
+## LATEXMK_PRE   = ${R} CMD ${R_OPTS}
+LATEXMK_PRE   =
+LATEXMK       = latexmk
 LATEXMK_FLAGS = -pdf
 ## rubber - latexmk alternative on linux systems only
 RUBBER    = $(R) CMD rubber
 RUB_FLAGS = -d
+
+## specific program variables - may need to redefine on other systems
+RM       = rm
+RM_OPTS  =
+CAT      = cat
+CAT_OPTS =
+PDFJAM   = pdfjam
+PDFJAM_OPTS=
 
 ## git variables ---------------------------------------------------
 
@@ -114,10 +133,11 @@ PANDOC_OPTS = -s
 ## R variables ---------------------------------------------
 
 R         = R
-RSCRIPT   = Rscript
 R_FLAGS   = CMD BATCH
-##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
 R_OPTS    = --vanilla
+RSCRIPT   = Rscript
+RSCRIPT_OPTS = --vanilla
+##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
 RWEAVE    = $(R) CMD Sweave
 RWEAVE_FLAGS =
 
@@ -169,62 +189,67 @@ help-stitch:
 	@echo "    file (base)names for reports and analysis"
 
 %.pdf: %.R
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.r
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.html: %.R
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", \"html_document\")"
 %.html: %.r
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", \"html_document\")"
 ## this borrows line from below
 %.docx: %.R
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", \"word_document\")"
 %.docx: %.r
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", \"word_document\")"
 
 ## knit and rmarkdown pattern rules ----------------------------------
 
-## produce R syntax from .rnw or .Rmd files
-%.R: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rnw}\")"
-%.R: %.rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.rnw}\")"
-%.R: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
-%.R: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);purl(\"${@:.R=.rmd}\")"
+## produce R syntax from .Rmd files - Note that .Rnw files in beamer section
+## %-syntax.R: %.Rmd
+##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
+## %-syntax.R: %.rmd
+##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);purl(\"${@:.R=.rmd}\")"
+
+%-syntax.R: %.Rmd
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+%-syntax.R: %.rmd
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+
 
 ## wonder if this would cause a conflict with rmarkdown - shouldn't as
 ## long as R markdown rules come after this and possible override with
-## explicit definitions?
-%.md: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
-%.md: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
+## explicit definitions? THIS CONFLICTS BADLY
+## %.md: %.Rmd
+## 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
+## %.md: %.rmd
+## 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit(\"${@:.md=.rmd}\")"
 
-## pandoc pattern rules 
-%.pdf: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.docx: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.html: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
-%.tex: %.md
-	${PANDOC} ${PANDOC_OPTS} $< -o $@
+## ## pandoc pattern rules 
+## %.pdf: %.md
+## 	${PANDOC} ${PANDOC_OPTS} $< -o $@
+## %.docx: %.md
+## 	${PANDOC} ${PANDOC_OPTS} $< -o $@
+## %.html: %.md
+## 	${PANDOC} ${PANDOC_OPTS} $< -o $@
+## %.tex: %.md
+# # 	${PANDOC} ${PANDOC_OPTS} $< -o $@
 
-## tex file from .Rnw
+## tex file from .Rnw - obsolete as now use rmarkdown=knit and pandoc
 %.tex: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
 %.tex: %.rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
 
 ## Not sure if this conflicts  ----- START
-%.pdf : %.tex
-	${RSCRIPT} ${R_OPTS} ${LATEXMK} ${LATEXMK_FLAGS} $<
+##%.pdf : %.tex
+##	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $<
+##	${R} CMD ${LATEXMK} ${LATEXMK_FLAGS} $<
 
 ## best to go to .pdf directly rather tahn creating .tex file
 %.pdf: %.Rnw
-	${RSCRIPT} ${R_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+%.pdf: %.rnw
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
 ## Not sure if this conflicts  ----- END
 
 ## Uses latex2rtf but perhaps should use markdown/pandoc as better 
@@ -261,62 +286,65 @@ help-rmarkdown:
 	@echo "    then typing the following at the command prompt"
 	@echo '    $$ make rmarkdown-all'
 	@echo "    produces all formats defined in YAML header for 'myfile.Rmd'"
+	@echo ""
+	@echo "   Finally, BASENAME-syntax.R: produces R syntax file tangled from Rnw using knit"
+
 
 ## .pdf from .Rmd (via latex)
 %.pdf: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 ## uncomment next line if required for debugging latex 
 ## .PRECIOUS: .tex 
 
 ## .html from .Rmd
 %.html: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
 %.html: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", \"html_document\")"
 
 ## .docx from .Rmd
 %.docx: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", \"word_document\")"
 %.docx: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", \"word_document\")"
 
 ## open office/libre office document format
 %.odt: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", \"odt_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", \"odt_document\")"
 %.odt: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", \"odt_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", \"odt_document\")"
 
 ## rich text format from rmd
 %.rtf: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", \"rtf_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", \"rtf_document\")"
 %.rtf: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", \"rtf_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", \"rtf_document\")"
 
 ## ioslides presentation
 %_ioslides.html: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.Rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.Rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
 %_ioslides.html: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
 
 ## slidy presentation
 %_slidy.html: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.Rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.Rmd}\", \"slidy_presentation\", output_file = \"$@\")"
 %_slidy.html: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.rmd}\", \"slidy_presentation\", output_file = \"$@\")"
 
 ## beamer presentation
 %_beamer.pdf: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.Rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.Rmd}\", \"beamer_presentation\", output_file = \"$@\")"
 %_beamer.pdf: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.rmd}\", \"beamer_presentation\", output_file = \"$@\")"
 
 ## tufte handout format (NB: first install.packages("tufte", dep=T))
 %_tufte.pdf: %.Rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.Rmd}\", \"tufte_handout\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.Rmd}\", \"tufte_handout\", output_file = \"$@\")"
 %_tufte.pdf: %.rmd
-	${RSCRIPT} ${R_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", \"tufte_handout\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", \"tufte_handout\", output_file = \"$@\")"
 
 ## backup using rsync -------------------------------------------------
 
@@ -446,45 +474,55 @@ PDFJAM_6UP = --no-landscape
 
 ## Beamer presentation pdf
 %_Present.Rnw: %.Rnw $(BEAMER_PRESENT)
-	cat $(BEAMER_PRESENT) $< > $@
+	$(CAT) $(CAT_OPTS) $(BEAMER_PRESENT) $< > $@
+%_Present.Rnw: %.rnw $(BEAMER_PRESENT)
+	$(CAT) $(CAT_OPTS) $(BEAMER_PRESENT) $< > $@
 %_Present.pdf: %_Present.Rnw
-	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);knit2pdf('$<')"
 
 ## Beamer presentation with notes pdf (notes show on second screen)
 %_Notes.Rnw: %.Rnw $(BEAMER_NOTES)
-	cat $(BEAMER_NOTES) $< > $@
+	$(CAT) $(CAT_OPTS) $(BEAMER_NOTES) $< > $@
+%_Notes.Rnw: %.rnw $(BEAMER_NOTES)
+	$(CAT) $(CAT_OPTS) $(BEAMER_NOTES) $< > $@
 %_Notes.pdf: %_Notes.Rnw
-	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);knit2pdf('$<')"
 
 ## produce Article pdf (slides usually not framed but can be)
 %_Article.Rnw: %.Rnw $(BEAMER_ARTICLE)
-	cat $(BEAMER_ARTICLE) $< > $@
+	$(CAT) $(CAT_OPTS) $(BEAMER_ARTICLE) $< > $@
+%_Article.Rnw: %.rnw $(BEAMER_ARTICLE)
+	$(CAT) $(CAT_OPTS) $(BEAMER_ARTICLE) $< > $@
 %_Article.pdf: %_Article.Rnw
-	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);knit2pdf('$<')"
 
 ## Handout - single slide on a landscape page pdf
 %_Handout.Rnw: %.Rnw $(BEAMER_HANDOUT)
-	cat $(BEAMER_HANDOUT) $< > $@
+	$(CAT) $(CAT_OPTS) $(BEAMER_HANDOUT) $< > $@
+%_Handout.rnw: %.rnw $(BEAMER_HANDOUT)
+	$(CAT) $(CAT_OPTS) $(BEAMER_HANDOUT) $< > $@
 %_Handout.pdf: %_Handout.Rnw
-	Rscript --vanilla -e "library(knitr);knit2pdf('$<')"
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);knit2pdf('$<')"
 
 ## Handouts: various - multiple slides per page using pdfjam - calls
 ##           latex pgfpages in background
 %-4up.pdf: %_Handout.pdf
-	pdfjam -o $@ ${PDFJAM_4UP} $<
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ ${PDFJAM_4UP} $<
 
 %-2up.pdf: %_Handout.pdf
-	pdfjam -o $@ ${PDFJAM_2UP} $<
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ ${PDFJAM_2UP} $<
 
 %-6up.pdf: %_Handout.pdf
-	pdfjam-slides6up -o $@ $(PDFJAM_6UP) $< 
+	$(PDFJAM)-slides6up $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
 
 %-3up.pdf: %_Handout.pdf
-	pdfjam-slides3up -o $@ $(PDFJAM_3UP) $<
+	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
 
-## extract R syntax using knitr::purl
+## extract R syntax using knitr::purl ## declared above
 %-syntax.R: %.Rnw
-	Rscript --vanilla -e 'library(knitr);purl("$<", out="$@")'
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+%-syntax.R: %.rnw
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
 
 ## housekeeping which needs improving - especially backup (.tgz or
 ## .zip file?)  but this won't work without extra directories etc
@@ -492,9 +530,8 @@ PDFJAM_6UP = --no-landscape
 
 .PHONY: clean
 clean: 
-	-rm -f *.pdf *.Rout *.log *.aux *.bbl *~
+	-${RM} ${RM_OPTS} -f *.pdf *.Rout *.log *.aux *.bbl *~
 
 .PHONY: backup
 backup:
 	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout
-

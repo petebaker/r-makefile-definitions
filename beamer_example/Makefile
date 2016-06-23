@@ -1,6 +1,6 @@
 ## test beamer examples
 .PHONY: all
-all: b1_Present.pdf b1_Notes.pdf b1_Article.pdf b1-2up.pdf b1-3up.pdf b1-4up.pdf b1-6up.pdf
+all: b1_Present.pdf b1_Notes.pdf b1_Article.pdf b1_Handout.pdf b1-2up.pdf b1-4up.pdf b1-3up.pdf b1-6up.pdf b2_Present.pdf b2_Notes.pdf b1-syntax.R b2-syntax.R
 
 ## Changelog: Original version Sunday 2016-06-19 at 18:16:22
 
@@ -24,4 +24,4 @@ BEAMER_NOTES = preambleNotes.Rnw
 
 .PHONY: clean-all
 clean-all:
-	rm -fr *.pdf figure *.toc *.tex *.vrb *.snm *.out *.nav *.log *.aux
+	rm -fr *.pdf figure *.toc *.tex *.vrb *.snm *.out *.nav *.log *.aux *~ *.R

@@ -1,7 +1,7 @@
 ## Example Makefile
 
 .PHONY: all
-all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf test.tex knitr-minimal.R knitr-minimal.tex knitr-minimal.pdf
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf knitr-minimal-syntax.R  knitr-minimal.pdf
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
@@ -33,3 +33,24 @@ include common.mk
 ## uncomment for testing rsync
 ##RSYNC_DESTINATION = ~/ownCloud/myProject
 ##RSYNC_FILES = common.mk test.Rmd knitr-minimal.Rnw
+
+RM=rm
+RM_OPTS=-f
+
+.PHONY: clean-all
+clean-all: ##*.pdf *.html *.docx
+	${RM} ${RM_OPTS} *.pdf *.html *.docx
+
+.PHONY: clean-severe
+clean-severe: ##*.tex *.pdf *.html *.docx
+	${RM} ${RM_OPTS} *.tex *.pdf *.html *.docx
+
+## on MACOSX this may be necessary only if these not in PATH
+## export LATEXMK=/Library/TeX/texbin/latexmk
+## export RM=/usr/local/opt/coreutils/libexec/gnubin/rm
+## export RM_OPTS=
+## export CAT=/usr/local/opt/coreutils/libexec/gnubin/cat
+## export CAT_OPTS=
+## export PDFJAM=/Library/TeX/texbin/pdfjam
+### export PDFJAM_OPTS=
+
