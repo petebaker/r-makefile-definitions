@@ -25,10 +25,10 @@ files, *.docx* files from *.Rmd* files and so on.
 The file *common.mk* can be included in a standard *Makefile* to
 facilitate a more efficient workflow.
 
-**NB:** For **MAC-OSX** make (like many other programs) is ancient in
-computing terms. Please install *GNU Make*. IMHO, the best way is to
-install via *homebrew* - see http://brew.sh/. Don't forget to use
-*gmake* instead of the MAC-OSX make.
+**NB:** For **MAC-OSX**, make (like many other programs), is ancient in
+computing terms. Please install a recent version of *GNU Make*. IMHO,
+the best way is to install via *homebrew* - see http://brew.sh/. Don't
+forget to use *gmake* instead of the MAC-OSX make.
 
 Using common.mk
 ============
@@ -56,7 +56,7 @@ To actually use these rules in practice, we may have several prerequisite files 
 readData.Rout: readData.R data1.csv data2.csv oldData.RData
 ```
 
-so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’.
+so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’. Of course, it is better if 'readData.Rout' gets built automatically so you can just type 'make'.
 
 Example Makefiles
 ==============
@@ -109,10 +109,10 @@ all: report.pdf
 report.pdf: ${@:.pdf=.Rmd} summaryAndPlots.Rout
 
 ## summarise data
-summaryAndPlots.Rout: ${@:.Rout=.R} read.Rout
+summaryAndPlots.Rout: ${@:.Rout=.R} readData.Rout
 
 ## read data
-read.Rout: ${@:.Rout=.R} myData.csv
+readData.Rout: ${@:.Rout=.R} myData.csv
 
 include ~/lib/common.mk
 ```
