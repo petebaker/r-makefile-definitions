@@ -56,7 +56,9 @@ To actually use these rules in practice, we may have several prerequisite files 
 readData.Rout: readData.R data1.csv data2.csv oldData.RData
 ```
 
-so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’. Of course, it is better if 'readData.Rout' gets built automatically so you can just type 'make'.
+so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’. Of course, it is better if we set up our Makefile so that 'readData.Rout' gets built automatically and so we can just type 'make'. 
+
+To take advantage of *make*, the best approach is to define all necessary targets and dependencies in project Makefile(s).
 
 Example Makefiles
 ==============
