@@ -25,10 +25,11 @@ files, *.docx* files from *.Rmd* files and so on.
 The file *common.mk* can be included in a standard *Makefile* to
 facilitate a more efficient workflow.
 
-**NB:** For **MAC-OSX**, make (like many other programs), is ancient in
-computing terms. Please install a recent version of *GNU Make*. IMHO,
-the best way is to install via *homebrew* - see http://brew.sh/. Don't
-forget to use *gmake* instead of the MAC-OSX make.
+**NB:** For **MAC-OSX**, make (like many other programs), is pretty
+ancient in computing terms. You may prefer to install a recent version
+of *GNU Make*. IMHO, the best way is to install via *homebrew* - see
+http://brew.sh/. Use *gmake* which will run the new version instead of
+*make* which runs the old one.
 
 Using common.mk
 ============
