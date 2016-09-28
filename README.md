@@ -141,4 +141,4 @@ Notes
 
 Definitions in 'r-rules.mk' have been developed and tested on linux. To a limited extent, these rules have also been tested on windows (Rtools) and macosx (homebrew 'gmake' - not macosx Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
 
-Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like \$R, R\$R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
+Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
