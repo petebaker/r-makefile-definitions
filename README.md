@@ -22,7 +22,7 @@ analysis.  Unfortunately, **make** does not provide standard rules for
 producing *.Rout* files from *.R* files, *.pdf* files from *.Rnw*
 files, *.docx* files from *.Rmd* files and so on.
 
-The file *common.mk* can be included in a standard *Makefile* to
+The file *r-rules.mk* can be included in a standard *Makefile* to
 facilitate a more efficient workflow.
 
 **NB:** For **MAC-OSX**, make (like many other programs), is pretty
@@ -31,19 +31,19 @@ of *GNU Make*. IMHO, the best way is to install via *homebrew* - see
 http://brew.sh/. Use *gmake* which will run the new version instead of
 *make* which runs the old one.
 
-Using common.mk
+Using r-rules.mk
 ============
 
-1. Download the file to a directory you use for  files. Ideally,
+1. Download the file to a directory you use for such files. Ideally,
    this would something like:
    - ~/lib or C:\MyLibrary
 2. put the following line in your Makefile
-   - include ~/lib/common.mk where ~ will be expanded to be your HOME directory, or
-   - include C:/MyLibrary/common.mk (in windows)
+   - include ~/lib/r-rules.mk where ~ will be expanded to be your HOME directory, or
+   - include C:/MyLibrary/r-rules.mk (in windows)
 
 **Note:** the very simplest way to run make would be to simply create
 a new text file named *Makefile* in your working directory with a
-single line above including the file *common.mk*. If you have an R
+single line above including the file *r-rules.mk*. If you have an R
 syntax file named say mySpecialAnalysis.R then, in a terminal, you can
 run *R* to produce an output file by typing 'make
 mySpecialAnalysis.Rout' or produce a notebook using *Rmarkdown* by
@@ -87,16 +87,16 @@ myTalk_beamer.pdf: myTalk.Rmd
 ## produce a beamer presentation from .Rnw file
 myTalk_Present.pdf: myTalk.Rnw
 
-## if you have common.mk in ~/lib directory uncomment line below and comment
-include common.mk
-##include ~/lib/common.mk
+## if you have r-rules.mk in ~/lib directory uncomment line below and comment
+include r-rules.mk
+##include ~/lib/r-rules.mk
 ```
 
 You can then run this with the command **make** or **make all** at the
 shell prompt. Any target that is not up to date will be created by
 running the appropriate commands. Even better: set up *RStudio* or
 your favourite editor to do this at the press of a button. Note also
-that because of the rules defined in *common.mk*, you can use make to
+that because of the rules defined in *r-rules.mk*, you can use make to
 produce targets not actually defined in the *Makefile*. For instance,
 to use stitch to create pdf output *newAnalysis.pdf* from the file
 *newAnalysis.R* simply type **make newAnalysis.pdf** at the prompt.
@@ -117,7 +117,7 @@ summaryAndPlots.Rout: ${@:.Rout=.R} readData.Rout
 ## read data
 readData.Rout: ${@:.Rout=.R} myData.csv
 
-include ~/lib/common.mk
+include ~/lib/r-rules.mk
 ```
 
 Prerequisites
@@ -134,9 +134,11 @@ Note that *Windows* users can install *Rtools* (available via CRAN) to get a wor
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
 
+*MACOSX* users should install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/
+
 Notes
 =======
 
-Definitions in 'common.mk' have been developed and tested on linux and tested on windows. Some tweaking may be required.
+Definitions in 'r-rules.mk' have been developed and tested on linux. To a limited extent, these rules have also been tested on windows (Rtools) and macosx (homebrew 'gmake' - not macosx Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
 
-Once you have a Makefile which includes common.mk you can type 'make help' at the command prompt for further information. 
+Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like \$R, R\$R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.

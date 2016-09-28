@@ -1,17 +1,17 @@
-## File:    common.mk - to be included in Makefile(s)
+## File:    r-rules.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9004
+## Version: 0.2.9005
 ## Usage: Place file in a directory such as ~/lib and include with
-##         include ~/lib/common.mk
+##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
 ##         To override any definitions place them after the include statement
 ## NB: if using makepp then ~ is not recognized but the following is OK
-##         include ${HOME}/lib/common.mk
+##         include ${HOME}/lib/r-rules.mk
 ##
 ##   The latest version of this file is available at
 ##   https://github.com/petebaker/r-makefile-definitions
 
-## For help after including common.mk in Makefile: run
+## For help after including r-rules.mk in Makefile: run
 ##         $  make help
 
 ## Changelog: None recorded until Frid 2015-02-06 at 15:40:21
@@ -43,7 +43,12 @@
 ##            3) changed outputting R syntax from .Rmd and .Rnw files
 ##               to produce -syntax.R to avoid dependency loops where
 ##               a .tex file then .pdf might be produced instead
-##               of using rmarkdown 
+##               of using rmarkdown
+##          Wed Sep 28 16:43:09 AEST 2016 (Version 0.2.9005)
+##            1) moved common.mk to r-rules.mk to better identify rules
+##            2) added markdown options RMARKDOWN_HTML_OPTS and
+##               RMARKDOWN_DOCX_OPTS
+##            3) added a .r dependency for .Rout files
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -169,6 +174,10 @@ help-r:
 ##	@echo Job $<: started at `date`
 	${R} ${R_FLAGS} ${R_OPTS} $< 
 ##	@echo Job $<: finished at `date`
+%.Rout: %.r
+##	@echo Job $<: started at `date`
+	${R} ${R_FLAGS} ${R_OPTS} $< 
+##	@echo Job $<: finished at `date`
 
 ## stitch an R file using knitr --------------------------------------
 
@@ -176,6 +185,8 @@ help-r:
 ## both on CRAN now so easy to install
 
 RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE)
+RMARKDOWN_HTML_OPTS = ()
+RMARKDOWN_DOCX_OPTS = ()
 
 .PHONY: help-stitch
 help-stitch:
@@ -193,14 +204,14 @@ help-stitch:
 %.pdf: %.r
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.html: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", html_document${RMARKDOWN_HTML_OPTS})"
 %.html: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", html_document${RMARKDOWN_HTML_OPTS})"
 ## this borrows line from below
 %.docx: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", word_document${RMARKDOWN_DOCX_OPTS})"
 %.docx: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", word_document${RMARKDOWN_DOCX_OPTS})"
 
 ## knit and rmarkdown pattern rules ----------------------------------
 
@@ -218,7 +229,7 @@ help-stitch:
 
 ## wonder if this would cause a conflict with rmarkdown - shouldn't as
 ## long as R markdown rules come after this and possible override with
-## explicit definitions? THIS CONFLICTS BADLY
+## explicit definitions? UPSHOT: THIS CONFLICTS BADLY - DON'T DO THIS
 ## %.md: %.Rmd
 ## 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit(\"${@:.md=.Rmd}\")"
 ## %.md: %.rmd
@@ -234,25 +245,29 @@ help-stitch:
 ## %.tex: %.md
 # # 	${PANDOC} ${PANDOC_OPTS} $< -o $@
 
+## Not sure if this conflicts  ----- START
+
 ## tex file from .Rnw - obsolete as now use rmarkdown=knit and pandoc
 %.tex: %.Rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
 %.tex: %.rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
 
-## Not sure if this conflicts  ----- START
+## Not sure if this conflicts
 ##%.pdf : %.tex
 ##	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $<
 ##	${R} CMD ${LATEXMK} ${LATEXMK_FLAGS} $<
 
-## best to go to .pdf directly rather tahn creating .tex file
+## best to go to .pdf directly rather than creating .tex file
+## I am relying on the %.tex: %.Rnw being overriden but problematic if .tex file
+## hanging around due to crash - perhaps remove %.tex: %.[Rr]nw rules
 %.pdf: %.Rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
 %.pdf: %.rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
 ## Not sure if this conflicts  ----- END
 
-## Uses latex2rtf but perhaps should use markdown/pandoc as better 
+## Uses latex2rtf but perhaps should use markdown/pandoc as better result 
 %.rtf: %.tex
 	${LATEX2RTF} ${L2R_FLAGS} ${@:.rtf=}
 
@@ -295,20 +310,26 @@ help-rmarkdown:
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.rmd
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
-## uncomment next line if required for debugging latex 
+## uncomment next line if required for debugging latex although could also use
+##                clean = FALSE in RMARKDOWN_PDF_OPTS to see .log file
 ## .PRECIOUS: .tex 
+
+## Note: html and docx added options for general setting Wed Sep 28 16:43:09
+## Was
+##%.html: %.Rmd
+##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
 
 ## .html from .Rmd
 %.html: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", html_document${RMARKDOWN_HTML_OPTS})"
 %.html: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", \"html_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", html_document${RMARKDOWN_HTML_OPTS})"
 
 ## .docx from .Rmd
 %.docx: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", word_document${RMARKDOWN_DOCX_OPTS})"
 %.docx: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", \"word_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", word_document${RMARKDOWN_DOCX_OPTS})"
 
 ## open office/libre office document format
 %.odt: %.Rmd
@@ -412,6 +433,9 @@ help-git:
 	@echo $$ git push [remote-name] [branch-name] : to push repository to remote
 	@echo See http://git-scm.com/doc or
 	@echo http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
+	@echo ""
+	@echo NB: It really is best to set up .git/config file and use git directly
+	@echo "    (or in RStudio or emacs)"
 
 .PHONY: git.status
 git.status:

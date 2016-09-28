@@ -18,28 +18,28 @@ test-stitch.Rout: ${@:.Rout=.R}
 ## use stitch to produce pdf via rmarkdown (exactly as in RStudio)
 test-stitch.pdf: ${@:.pdf=.R}
 
-## comment following line if you place the 'common.mk' file elsewhere
-include common.mk
+## comment following line if you place the 'r-rules.mk' file elsewhere
+include r-rules.mk
 
-## if you have 'common.mk' in ~/lib directory uncomment line below and
+## if you have 'r-rules.mk' in ~/lib directory uncomment line below and
 ##  comment include line above
-## include ~/lib/common.mk
+## include ~/lib/r-rules.mk
 
 ## on windows either of these will work but, depending on your setup, the
 ##  first may produce a warning
-## include c:/myLibrary/common.mk
-## include /cygdrive/c/myLibrary/common.mk
+## include c:/myLibrary/r-rules.mk
+## include /cygdrive/c/myLibrary/r-rules.mk
 
 ## uncomment for testing rsync
 ##RSYNC_DESTINATION = ~/ownCloud/myProject
-##RSYNC_FILES = common.mk test.Rmd knitr-minimal.Rnw
+##RSYNC_FILES = r-rules.mk test.Rmd knitr-minimal.Rnw
 
 RM=rm
 RM_OPTS=-f
 
 .PHONY: clean-all
 clean-all: ##*.pdf *.html *.docx
-	${RM} ${RM_OPTS} *.pdf *.html *.docx
+	${RM} ${RM_OPTS} *.pdf *.html *.docx readme.tex
 
 .PHONY: clean-severe
 clean-severe: ##*.tex *.pdf *.html *.docx
