@@ -1,6 +1,6 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9005
+## Version: 0.2.9006
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -49,6 +49,10 @@
 ##            2) added markdown options RMARKDOWN_HTML_OPTS and
 ##               RMARKDOWN_DOCX_OPTS
 ##            3) added a .r dependency for .Rout files
+##         Sunday 2016-11-13 at 20:33:24 - Version 0.9006
+##            1) added Graham-Cumming (2015) multiple target functions
+##               sentinel and atomic for multiple targets
+##               NB: Still need to add help, document and redo examples
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -559,3 +563,17 @@ clean:
 .PHONY: backup
 backup:
 	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout
+
+## multiple targets ------------------------------------------------------
+##
+## rules for multiple targets as outlined in Graham-Cumming (2015)
+##
+
+sp :=
+sp +=
+sentinel = .sentinel.$(subst $(sp),_,$(subst /,_,$1))
+atomic = $(eval $1: $(call sentinel,$1) ; @:)$(call sentinel,$1): \
+           $2 ; touch $$@ $(foreach t,$1,$(if $(wildcard $t),,$(shell rm -f\
+           $(call sentinel,$1))))
+
+## for use see Graham-Cumming (2015) or examples in multiple_targets directory
