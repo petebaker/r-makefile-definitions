@@ -1,6 +1,6 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9006
+## Version: 0.2.9007
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -49,16 +49,20 @@
 ##            2) added markdown options RMARKDOWN_HTML_OPTS and
 ##               RMARKDOWN_DOCX_OPTS
 ##            3) added a .r dependency for .Rout files
-##         Sunday 2016-11-13 at 20:33:24 - Version 0.9006
+##         Sunday 2016-11-13 at 20:33:24 - Version 0.2.9006
 ##            1) added Graham-Cumming (2015) multiple target functions
 ##               sentinel and atomic for multiple targets
 ##               NB: Still need to add help, document and redo examples
+##         Saturday 2017-06-03 at 10:05pm - Version 0.2.9007
+##            1) Added SAS, STATA, PSPP
+##            2) Added python and perl
+##            NB: SAS, STATA, PSPP only simple testing on Windows/MacOSX
 
 ## TODO: 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
 ##          PARTIALLY DONE 2015-03-29 at 09:37:41
 ##          DONE 2016-06-19 at 18:45:02
-##       3) generic clean/backup needs work (see end of file)
+##       3) generic clean/backup needs work (see just before multiple targets)
 
 ## For Sweave I've changed the default to knit as that's what I
 ## usually want but to use Sweave then uncomment appropriate lines below
@@ -93,6 +97,7 @@ help:
 	@echo make help-beamer
 	@echo make help-git
 	@echo make help-rsync
+	@echo make help-stats-others
 
 # latex variables ---------------------------------------------------
 
@@ -149,6 +154,11 @@ RSCRIPT_OPTS = --vanilla
 ##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
 RWEAVE    = $(R) CMD Sweave
 RWEAVE_FLAGS =
+
+## --------------------------------------------------------------
+## R and Rmarkdown ----------------------------------------------
+## --------------------------------------------------------------
+
 
 ## R pattern rules -------------------------------------------------
 .PHONY: help-r
@@ -371,7 +381,9 @@ help-rmarkdown:
 %_tufte.pdf: %.rmd
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", \"tufte_handout\", output_file = \"$@\")"
 
+## --------------------------------------------------------------------
 ## backup using rsync -------------------------------------------------
+## --------------------------------------------------------------------
 
 .PHONY: help-rsync
 help-rsync:
@@ -418,7 +430,11 @@ rsynctest2here:
 rsynccopy2here:
 	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
 
-## git  -------------------------------------------------
+## -----------------------------------------------------------
+## git  ------------------------------------------------------
+## -----------------------------------------------------------
+
+## more to remind me of commands than for actual use ---------
 
 .PHONY: help-git
 help-git:
@@ -454,7 +470,9 @@ git.push:
 	${GIT} push ${GIT_ORIGIN} ${GIT_REMOTE}
 
 
-## Course slides/presentations using knit/beamer ------------------------
+## ---------------------------------------------------------------------
+## Course slides/presentations using knit/beamer -----------------------
+## ---------------------------------------------------------------------
 
 .PHONY: help-beamer
 help-beamer:
@@ -552,6 +570,10 @@ PDFJAM_6UP = --no-landscape
 %-syntax.R: %.rnw
 	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
 
+## ---------------------------------------------------------------
+## house-keeping/cleaning ----------------------------------------
+## ---------------------------------------------------------------
+
 ## housekeeping which needs improving - especially backup (.tgz or
 ## .zip file?)  but this won't work without extra directories etc
 ## needs some checking and thought
@@ -564,7 +586,10 @@ clean:
 backup:
 	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout
 
-## multiple targets ------------------------------------------------------
+## ---------------------------------------------------------------
+## multiple targets ----------------------------------------------
+## ---------------------------------------------------------------
+
 ##
 ## rules for multiple targets as outlined in Graham-Cumming (2015)
 ##
@@ -577,3 +602,106 @@ atomic = $(eval $1: $(call sentinel,$1) ; @:)$(call sentinel,$1): \
            $(call sentinel,$1))))
 
 ## for use see Graham-Cumming (2015) or examples in multiple_targets directory
+
+## ---------------------------------------------------------------
+## Other statistical software and perl/python --------------------
+## ---------------------------------------------------------------
+
+## SAS STATA PSPP python perl rules ------------------------------
+
+.PHONY: help-stats-others
+help-stats-others:
+	@echo ""
+	@echo Other software: SAS, STATA, PSPP, perl, python
+	@echo ""
+	@echo "SAS:    make myFile.lst     from myFile.sas"
+	@echo "STATA:  make myFile.log     from myFile.do"
+	@echo "PSPP:   make myFile.list    from myFile.sps"
+	@echo "        make myFile.pdf     from myFile.sps"
+	@echo "        make myFile.odt     from myFile.sps"
+	@echo "perl:   make myFile.txt     from myFile.pl"
+	@echo "python: make myFile.txt     from myFile.py"
+	@echo ""
+	@echo "Variables:"
+	@echo "Programs: SAS, STATA, PSPP, PYTHON, PERL"
+	@echo "Options":
+	@echo SAS_CFG, SAS_OPTS, STATA_OPTS, PSPP_OPTS, PL_OPTS, PY_OPTS
+	@echo "File Output Extensions (since no defaults):"
+	@echo "PL_OUT_EXT, PY_OUT_EXT  Default: txt"
+	@echo ""
+	@echo "Example: to make output 'myFile.out' from 'myFile.py'"
+	@echo ""
+	@echo "PYTHON = /usr/local/bin/python"
+	@echo "PY_OUT_EXT = out"
+	@echo "make myFile.out"
+
+## python variables and rules ------------------------------
+## PYTHON = /usr/bin/python
+PYTHON = python
+PY_OUT_EXT = txt
+PY_OPTS = 
+%.${PY_OUT_EXT}: %.py
+	${PYTHON} ${PY_OPTS} $< > ${<:.py=.${PY_OUT_EXT}}
+%.${PY_OUT_EXT}: %.PY
+	${PYTHON} ${PY_OPTS} $< > ${<:.PY=.${PY_OUT_EXT}}
+
+## python variables and rules ------------------------------
+## PERL = /usr/bin/perl
+PERL = perl
+PL_OUT_EXT = txt
+PL_OPTS = 
+%.${PL_OUT_EXT}: %.pl
+	${PERL} ${PL_OPTS} $< > ${<:.pl=.${PL_OUT_EXT}}
+%.${PL_OUT_EXT}: %.PL
+	${PERL} ${PL_OPTS} $< > ${<:.PL=.${PL_OUT_EXT}}
+
+## PSPP: GNU PSPP -------------------------------------------
+## Notes:
+## SPSS: On Windows recent versions have seemingly bizarre project
+##       system which doesn't have simple batch like it used to
+##       although older versions OK from command prompt. As I don't
+##       have access any more I can only test PSPP PB 3/6/2017
+## NB: pspp is pretty basic and doesn't have usable command line
+##     options but variable defined just in case things change
+PSPP = pspp
+PSPP_OPTS =
+
+## list file from pspp file
+%.list: %.sps ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+%.LIST: %.SPS ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+
+## PDF file from pspp file
+%.pdf: %.sps ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+%.PDF: %.SPS ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+
+## libre office file from pspp file
+%.odt: %.sps ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+%.ODT: %.SPS ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
+
+## STATA ---------------------------------------------------
+## I only have access to networked versions
+##
+## Networked Windows stata
+## STATA=S:/ITS-NetLicSoftware/SPH-STATA12/Stata14/StataSE-64.exe
+## STATA_OPTS=/e do 
+## STATA_OPTS=/b do 
+## Networked Mac OSX stata
+## STATA=smb://nas02.storage.uq.edu.au/HBS-MBS-Shared/ITS-NetLicSoftware/SPH-STATA12/osx/StataSE
+STATA=stata
+STATA_OPTS=-e do 
+## stata rule: log file from do file
+%.log: %.do ; ${STATA} ${STATA_OPTS} $<
+%.LOG: %.DO ; ${STATA} ${STATA_OPTS} $<
+
+## SAS ------------------------------------------------------
+##
+## SAS 9.4 for Windows
+## SAS=C:/Program\ Files/SASHome/SASFoundation/9.4/sas.exe
+## SAS_CFG=-CONFIG "C:\Program Files\SASHome\SASFoundation\9.4\nls\en\sasv9.cfg"
+SAS=sas
+SAS_CFG="-CONFIG ${HOME}/sasv9.cfg"
+SAS_OPTS=
+
+## lst file from sas file
+%.lst: %.sas ; ${SAS} ${SAS_OPTS} $< ${SAS_CFG}
+%.LST: %.SAS ; ${SAS} ${SAS_OPTS} $< ${SAS_CFG}

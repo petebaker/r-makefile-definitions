@@ -128,17 +128,19 @@ To use these makefile definitions you need to install
 - R         http://www.r-project.org/
 - R packages on CRAN: rmarkdown, knitr
 - pandoc   http://johnmacfarlane.net/pandoc/
-- latexmk   http://http://www.ctan.org/pkg/latexmk/
+- latexmk   http://http://www.ctan.org/pkg/latexmk/ (only for R Sweave)
 
 Note that *Windows* users can install *Rtools* (available via CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
 
-*MACOSX* users should install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/
+*MACOSX* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode*.
 
 Notes
 =======
 
 Definitions in 'r-rules.mk' have been developed and tested on linux. To a limited extent, these rules have also been tested on windows (Rtools) and macosx (homebrew 'gmake' - not macosx Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
+
+Extra rules for SAS, STATA, PSPP, python and perl are very preliminary and not extensively tested.
 
 Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
