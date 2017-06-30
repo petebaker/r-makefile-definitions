@@ -1,6 +1,6 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
-## Version: 0.2.9007
+## Version: 0.2.9008
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -57,8 +57,13 @@
 ##            1) Added SAS, STATA, PSPP
 ##            2) Added python and perl
 ##            NB: SAS, STATA, PSPP only simple testing on Windows/MacOSX
+##         Friday 2017-06-30 12:30am - Version 0.2.9008
+##            1) puts function definitions into separate file to define
+##               functions at the start separately and override in Makefile
+##               New File:  r-rules-functions.mk
+##            2) added complex-demo recursive and non-recursive make examples
 
-## TODO: 1) proper documentation            2015-02-21 at 23:41:44
+## EXTRA 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
 ##          PARTIALLY DONE 2015-03-29 at 09:37:41
 ##          DONE 2016-06-19 at 18:45:02
@@ -585,23 +590,6 @@ clean:
 .PHONY: backup
 backup:
 	-zip -9 backup/backup-`date +%F`.zip *.R Makefile */*/*.csv *.pdf *.Rnw *.Rmd *.Rout
-
-## ---------------------------------------------------------------
-## multiple targets ----------------------------------------------
-## ---------------------------------------------------------------
-
-##
-## rules for multiple targets as outlined in Graham-Cumming (2015)
-##
-
-sp :=
-sp +=
-sentinel = .sentinel.$(subst $(sp),_,$(subst /,_,$1))
-atomic = $(eval $1: $(call sentinel,$1) ; @:)$(call sentinel,$1): \
-           $2 ; touch $$@ $(foreach t,$1,$(if $(wildcard $t),,$(shell rm -f\
-           $(call sentinel,$1))))
-
-## for use see Graham-Cumming (2015) or examples in multiple_targets directory
 
 ## ---------------------------------------------------------------
 ## Other statistical software and perl/python --------------------

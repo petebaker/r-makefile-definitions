@@ -1,0 +1,69 @@
+---
+title: "Example Routine Project"
+author: "Peter Baker"
+date: "Wed Oct 26 17:17:52 2016"
+output:
+  html_document:
+    toc: true
+    theme: united
+  pdf_document:
+    toc: true
+    highlight: zenburn
+---
+
+Results of simple linear regression
+
+```{r, echo=FALSE, messages=FALSE, warnings=FALSE, errors=TRUE}
+suppressMessages(library(knitr))
+suppressMessages(library(rmarkdown))
+suppressMessages(library(pander))
+suppressMessages(library(RcmdrMisc))
+suppressMessages(library(effects))
+
+load(file.path("../data/derived", "clean_simple_csv.RData"))
+load(file.path("../data/derived", "analyse_simple_csv.RData"))
+```
+
+# Statistical Analysis
+
+Simple  *R* and output:
+```{r}
+summary(lm1)
+```
+
+Nicer versions can be printed using *pander*.
+
+```{r, echo=FALSE, results='asis'}
+  pander(summary(lm1))
+```
+
+And ANOVAs
+  
+```{r, echo=FALSE, results='asis'}
+if (exists("lm1")) {
+  knitr::kable(anova(lm1))
+  knitr::kable(Anova(lm1))
+}
+```
+
+And perhaps some standard residual plots.
+
+```{r, echo=FALSE, hold = TRUE, fig.cap = "Standard Residual Plots"}
+opPars <- par(mfrow = c(2, 2), oma = c(0, 0, 2, 0))
+plot(lm1)
+par(opPars)
+```
+
+Residual plots using *car* package.
+
+```{r, echo=FALSE, fig.cap = "CAR Residual Plots"}
+if (exists("lm1")) car::residualPlots(lm1)
+```
+
+And can plot effects stored previously
+
+```{r, echo=FALSE, fig.cap = "Effects Plot using library(effects)"}
+  plot(allEff1)
+```
+
+The slope was `r round(coef(lm1)[2], 2)` with se `r round(coef(summary(lm1))['x', 'Std. Error'], 2)` and p-value `r format.pval(coef(summary(lm1))['x', 4], eps = 0.001)`.

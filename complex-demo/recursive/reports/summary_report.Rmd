@@ -1,0 +1,60 @@
+---
+title: "Summary statistics for 'simple.csv'"
+author: Peter Baker 
+date: "Wed Oct 26 17:17:52 2016"
+output:
+  html_document:
+    toc: true
+    theme: united
+  pdf_document:
+    toc: true
+    highlight: zenburn
+---
+
+This is a possible report to summarise the data file *simple.csv*.
+
+```{r, echo=FALSE, messages=FALSE, warnings=FALSE, errors=TRUE}
+library(knitr)
+library(rmarkdown)
+library(pander)
+library(RcmdrMisc)
+
+load(file.path("../data/derived", "clean_simple_csv.RData"))
+load(file.path("../data/derived", "summary_simple_csv.RData"))
+N.CASES <- dim(clean_data)[1]
+```
+
+# Summary Statistics
+
+Data were cleaned and summary statistics presented here are for *y* and *x*.
+There were `r N.CASES` records.
+
+## Summary Tables
+
+Sometimes *numSummary* can produce problematic output for *knitr* but
+really should be OK given it is used inside R Commander.
+
+```{r, results='asis'}
+## pander(RcmdrMisc::numSummary(clean_data)) # but stored summary so use that
+pander(sumData$table)
+```
+
+This may be useful too:
+
+```{r, results='asis'}
+knitr::kable(psych::describe(clean_data), digit=1, caption = "Summary statistics")
+```
+
+## Summary Plots
+
+A simple scatterplot.
+
+```{r, echo=FALSE}
+
+```
+
+A ggplot2 plot
+
+```{r, echo=FALSE, fig.cap = "Fitted line and smoothed fit"}
+gg1
+```
