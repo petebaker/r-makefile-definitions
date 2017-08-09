@@ -12,7 +12,8 @@ linmod.Rout: linmod.R read.Rout
 read.Rout: read.R simple.csv
 
 ## include R pattern rule definitions from file in $HOME/lib
-include ~/lib/r-rules.mk
+## include ~/lib/r-rules.mk
+include ../r-rules.mk
 
 ## remove all target, output and extraneous files
 .PHONY: cleanall
