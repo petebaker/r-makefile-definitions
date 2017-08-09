@@ -1,0 +1,22 @@
+---
+title: Checking assumptions of simple linear regression
+author: Peter Baker
+date: ""
+---
+
+```{r echo=FALSE}
+library(car)
+load("linmod.RData")
+```
+
+The results are summarised as
+```{r echo=TRUE}
+summary(lm1)
+```
+
+The fitted linear model was a good fit except there appears to be an
+outlier as seen in a qqPlot
+```{r echo=TRUE}
+qqPlot(lm1)
+```
+

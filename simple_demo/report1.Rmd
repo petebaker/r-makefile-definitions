@@ -1,0 +1,26 @@
+---
+title: Simple linear regression
+author: Peter Baker
+date: ""
+---
+
+```{r echo=FALSE,results=FALSE}
+library(car)
+library(xtable)
+library(ggplot2)
+load("linmod.RData")
+```
+
+The results are summarised as
+```{r echo=FALSE, results='asis'}
+print(xtable(summary(lm1), caption = "Linear Regression Coefficients"),
+      caption.placement = "top")
+```
+
+The fitted linear model was a good fit except there appears to be an
+outlier as seen in plots below.
+```{r echo=FALSE, results='hold'}
+gplot1
+gplot2
+```
+
