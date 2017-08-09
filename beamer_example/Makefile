@@ -6,8 +6,8 @@ all: b1_Present.pdf b1_Notes.pdf b1_Article.pdf b1_Handout.pdf b1-2up.pdf b1-4up
 
 ## main file is 'b1.Rnw'
 
-## include ~/lib/common.mk
-include ../common.mk
+## include ~/lib/r-rules.mk
+include ../r-rules.mk
 
 ## NB: by default I put these preamble .Rnw files in ~/lib/beamerPreamble so
 ##     I know where the latest versions are
