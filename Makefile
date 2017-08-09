@@ -43,7 +43,7 @@ clean-all: ##*.pdf *.html *.docx
 
 .PHONY: clean-severe
 clean-severe: ##*.tex *.pdf *.html *.docx
-	${RM} ${RM_OPTS} *.tex *.pdf *.html *.docx
+	${RM} ${RM_OPTS} *.tex *.pdf *.html *.docx  *.pdf *.Rout *.log *.aux *.bbl *~ *.html *.docx *.out
 
 ## on MACOSX this may be necessary only if these not in PATH
 ## export LATEXMK=/Library/TeX/texbin/latexmk

@@ -585,7 +585,7 @@ PDFJAM_6UP = --no-landscape
 
 .PHONY: clean
 clean: 
-	-${RM} ${RM_OPTS} *.pdf *.Rout *.log *.aux *.bbl *~
+	-${RM} ${RM_OPTS} *.pdf *.Rout *.log *.aux *.bbl *~ *.html *.docx *.out
 
 .PHONY: backup
 backup:
