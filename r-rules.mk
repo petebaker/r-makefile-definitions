@@ -1,5 +1,8 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
 ## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
+##
+## Licence: GPLv3 see <http://www.gnu.org/licenses/>
+##
 ## Version: 0.2.9008
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk

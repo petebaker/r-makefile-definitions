@@ -1,7 +1,8 @@
 ## File: r-rules-functions.mk
 ## What: include at top of of Makefile so homegrown functions are defined
 ##       prior to use
-
+##
+## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 
 ## ---------------------------------------------------------------
 ## multiple targets ----------------------------------------------
