@@ -120,7 +120,7 @@ RUB_FLAGS = -d
 
 ## specific program variables - may need to redefine on other systems
 RM       = rm
-RM_OPTS  =
+RM_OPTS  = -f
 CAT      = cat
 CAT_OPTS =
 PDFJAM   = pdfjam
@@ -585,7 +585,7 @@ PDFJAM_6UP = --no-landscape
 
 .PHONY: clean
 clean: 
-	-${RM} ${RM_OPTS} -f *.pdf *.Rout *.log *.aux *.bbl *~
+	-${RM} ${RM_OPTS} *.pdf *.Rout *.log *.aux *.bbl *~
 
 .PHONY: backup
 backup:
