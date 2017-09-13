@@ -3,7 +3,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9008
+## Version: 0.2.9009
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -65,7 +65,7 @@
 ##               functions at the start separately and override in Makefile
 ##               New File:  r-rules-functions.mk
 ##            2) added complex-demo recursive and non-recursive make examples
-##         Wednesday 2017-09-13 at 17:35:43 Version 0.2.9009
+##         Wednesday 2017-09-13 at 17:35:43 - Version 0.2.9009
 ##            1) added a second remote destination for rsync
 ##            2) added post rsync variable RSYNC_FLAGS_POST for extra
 ##               flexibility
