@@ -65,6 +65,10 @@
 ##               functions at the start separately and override in Makefile
 ##               New File:  r-rules-functions.mk
 ##            2) added complex-demo recursive and non-recursive make examples
+##         Wednesday 2017-09-13 at 17:35:43 Version 0.2.9009
+##            1) added a second remote destination for rsync
+##            2) added post rsync variable RSYNC_FLAGS_POST for extra
+##               flexibility
 
 ## EXTRA 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -136,16 +140,6 @@ GIT_REMOTE = master
 GIT_ORIGIN = origin
 GIT = git
 GIT_FLAGS = -a
-
-## rsync variables ------------------------------------------------
-
-RSYNC_DESTINATION =
-## RSYNC_DESTINATION = ~/ownCloud/myProject
-RSYNC = rsync
-RSYNC_FLAGS = -auvtr
-RSYNC_FILES_LOCAL = *
-RSYNC_FILES_REMOTE = *
-RSYNC_DRY_RUN = --dry-run
 
 ## pandoc variables ---------------------------------------------
 
@@ -392,10 +386,11 @@ help-rmarkdown:
 ## --------------------------------------------------------------------
 ## backup using rsync -------------------------------------------------
 ## --------------------------------------------------------------------
+## NB: this could be more flexible using options like --delete,
+##     --include, --exclude etc etc 
 
 .PHONY: help-rsync
 help-rsync:
-	@echo ""
 	@echo Use rsync to backup files to/from local or remote destination
 	@echo ""
 	@echo "rsync local to remote:"
@@ -418,18 +413,49 @@ help-rsync:
 	@echo NB: rsync variables \(defaults in brackets\) are
 	@echo "    RSYNC_DESTINATION, RSYNC (rsync), RSYNC_FLAGS (-auvtr)"
 	@echo "    RSYNC_FILES_LOCAL (*), RSYNC_FILES_REMOTE (*) RSYNC_DRY_RUN (--dry-run)"
+	@echo "    RSYNC_FLAGS_POST (--exclude=.DS_Store)"
+	@echo "NB: Also can set RSYNC_FLAGS2 etc for a secondary rsync backup"
 	@echo See https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps
 
+## rsync variables ------------------------------------------------
+RSYNC = rsync
+RSYNC_DRY_RUN = --dry-run
 
-## rsync local to remote
+## first remote rsync variables
+RSYNC_DESTINATION =
+## RSYNC_DESTINATION = ~/ownCloud/myProject
+RSYNC_FLAGS = -auvtr
+RSYNC_FLAGS_POST = --exclude=.DS_Store
+RSYNC_FILES_LOCAL = *
+RSYNC_FILES_REMOTE = *
+
+## second remote rsync variables
+RSYNC_DESTINATION2 =
+## RSYNC_DESTINATION = ~/ownCloud/myProject
+RSYNC_FLAGS2 = ${RSYNC_FLAGS}
+RSYNC_FLAGS_POST2 = ${RSYNC_FLAGS_POST} --exclude="*~"
+RSYNC_FILES_LOCAL2 = ${RSYNC_FILES_LOCAL}
+RSYNC_FILES_REMOTE2 = ${RSYNC_FILES_REMOTE}
+
+## rsync local to 1st remote ------
 .PHONY: rsynctest
 rsynctest:
-	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/.
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/. ${RSYNC_FLAGS_POST}
 
 .PHONY: rsynccopy
 rsynccopy:
-	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/.
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL} ${RSYNC_DESTINATION}/. ${RSYNC_FLAGS_POST}
 
+## rsync local to 2nd remote ------
+.PHONY: rsynctest2
+rsynctest2:
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS2} ${RSYNC_FILES_LOCAL2} ${RSYNC_DESTINATION2}/. ${RSYNC_FLAGS_POST2}
+
+.PHONY: rsynccopy2
+rsynccopy2:
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_FILES_LOCAL2} ${RSYNC_DESTINATION2}/. ${RSYNC_FLAGS_POST2}
+
+## rsync 1st remote to local ------
 .PHONY: rsynctest2here
 rsynctest2here:
 	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
