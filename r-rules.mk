@@ -203,6 +203,7 @@ help-r:
 RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE)
 RMARKDOWN_HTML_OPTS = ()
 RMARKDOWN_DOCX_OPTS = ()
+RMARKDOWN_ODT_OPT = ()
 
 .PHONY: help-stitch
 help-stitch:
@@ -228,6 +229,12 @@ help-stitch:
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", word_document${RMARKDOWN_DOCX_OPTS})"
 %.docx: %.r
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", word_document${RMARKDOWN_DOCX_OPTS})"
+## this borrows line from below
+%.odt: %.R
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.R}\", word_document${RMARKDOWN_ODT_OPTS})"
+%.odt: %.r
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.r}\", word_document${RMARKDOWN_ODT_OPTS})"
+
 
 ## knit and rmarkdown pattern rules ----------------------------------
 
