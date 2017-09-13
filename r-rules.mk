@@ -100,7 +100,6 @@
 
 .PHONY: help
 help:
-	@echo ""
 	@echo Simple help can be obtained with
 	@echo ""
 	@echo make help-r
@@ -165,7 +164,6 @@ RWEAVE_FLAGS =
 ## R pattern rules -------------------------------------------------
 .PHONY: help-r
 help-r:
-	@echo ""
 	@echo Just one major rule to produce .Rout but can stitch .R file too
 	@echo ""
 	@echo $$ make myFile.Rout
@@ -180,6 +178,8 @@ help-r:
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
 	@echo "    only 'myFile.R'"
 	@echo "    So good practice is to use different (base)names for reports and analysis"
+	@echo ""
+	@echo "    Type 'make help-stitch' for details of other output formats."
 
 ## produce .Rout from .R file --------------------------------------
 
@@ -200,7 +200,8 @@ help-r:
 ## I find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easy to install
 
-RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE)
+## RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE) # default fig_capt
+RMARKDOWN_PDF_OPTS = (fig_crop=FALSE)
 RMARKDOWN_HTML_OPTS = ()
 RMARKDOWN_DOCX_OPTS = ()
 RMARKDOWN_ODT_OPTS = ()
@@ -208,11 +209,17 @@ RMARKDOWN_RTF_OPTS = ()
 
 .PHONY: help-stitch
 help-stitch:
-	@echo ""
 	@echo To stitch file \(like RStudio\) from a .R file, just do one of the following:
 	@echo make myFile.pdf
 	@echo make myFile.docx
 	@echo make myFile.html
+	@echo make myFile.odt
+	@echo make myFile.rtf
+	@echo " "
+	@echo Variables: RMARKDOWN_PDF_OPTS has default \(fig_crop=FALSE\)
+	@echo "           RMARKDOWN_HTML_OPTS, RMARKDOWN_DOCX_OPTS, RMARKDOWN_ODT_OPTS,"
+	@echo "           RMARKDOWN_RTF_OPTS have default ()"
+	@echo " "
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
 	@echo "    only 'myFile.R' So good practice is to use different"
 	@echo "    file (base)names for reports and analysis"
@@ -334,6 +341,7 @@ help-rmarkdown:
 	@echo "    produces all formats defined in YAML header for 'myfile.Rmd'"
 	@echo ""
 	@echo "   Finally, BASENAME-syntax.R: produces R syntax file tangled from Rnw using knit"
+	@echo "   Type 'make help-stitch' for details of variables"
 
 
 ## .pdf from .Rmd (via latex)
