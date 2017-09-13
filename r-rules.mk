@@ -203,7 +203,8 @@ help-r:
 RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE)
 RMARKDOWN_HTML_OPTS = ()
 RMARKDOWN_DOCX_OPTS = ()
-RMARKDOWN_ODT_OPT = ()
+RMARKDOWN_ODT_OPTS = ()
+RMARKDOWN_RTF_OPTS = ()
 
 .PHONY: help-stitch
 help-stitch:
@@ -216,24 +217,31 @@ help-stitch:
 	@echo "    only 'myFile.R' So good practice is to use different"
 	@echo "    file (base)names for reports and analysis"
 
+## pdf output
 %.pdf: %.R
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
 %.pdf: %.r
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+## html output
 %.html: %.R
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", html_document${RMARKDOWN_HTML_OPTS})"
 %.html: %.r
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", html_document${RMARKDOWN_HTML_OPTS})"
-## this borrows line from below
+## word doc output
 %.docx: %.R
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", word_document${RMARKDOWN_DOCX_OPTS})"
 %.docx: %.r
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", word_document${RMARKDOWN_DOCX_OPTS})"
-## this borrows line from below
+## open (libre) office output
 %.odt: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.R}\", word_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.R}\", odt_document${RMARKDOWN_ODT_OPTS})"
 %.odt: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.r}\", word_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.r}\", odt_document${RMARKDOWN_ODT_OPTS})"
+## rich text rtf output
+%.rtf: %.R
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.R}\", rtf_document${RMARKDOWN_RTF_OPTS})"
+%.rtf: %.r
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.r}\", rtf_document${RMARKDOWN_RTF_OPTS})"
 
 
 ## knit and rmarkdown pattern rules ----------------------------------
@@ -356,15 +364,15 @@ help-rmarkdown:
 
 ## open office/libre office document format
 %.odt: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", \"odt_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", odt_document${RMARKDOWN_ODT_OPTS})"
 %.odt: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", \"odt_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", odt_document${RMARKDOWN_ODT_OPTS})"
 
 ## rich text format from rmd
 %.rtf: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", \"rtf_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", rtf_document${RMARKDOWN_RTF_OPTS})"
 %.rtf: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", \"rtf_document\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", rtf_document${RMARKDOWN_RTF_OPTS})"
 
 ## ioslides presentation
 %_ioslides.html: %.Rmd
