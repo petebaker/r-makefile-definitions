@@ -8,11 +8,11 @@
 # Created at:  Thurs 2017-09-14 at 21:57:08
 # Author:      Peter Baker
 # Hostname:    clearwell2.fritz.box
-# Directory:   ~/dev.r-makefile-definitions
+# Directory:   ~/dev/r-makefile-definitions
 #              should be placed in PATH eg ~/bin
 # Licence:     GPLv3 see <http://www.gnu.org/licenses/>
 #
-# Platform:     Not specified - linux at least but nay bash shell should work
+# Platform:     Not specified - linux at least but any bash shell should work
 #
 # Based on pp 7-8 of Randal K Michael (2008) Mastering UNIX Shell Scripting
 #
