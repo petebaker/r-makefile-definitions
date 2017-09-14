@@ -1,0 +1,36 @@
+## File: Makefile.runR
+## 
+## What: Template typical rules for R files but adds extension R_OUT_EXT
+## 
+##   - take a copy and modify as necessary
+##   - ideally put modified copy in a directory you access often or write
+##     a script to grab a copy whenever you need
+
+##R_OUT_EXT = Rout
+R_OUT_EXT = pdf
+##R_OUT_EXT = html
+##R_OUT_EXT = docx
+##R_OUT_EXT = odt
+##R_OUT_EXT = rtf
+
+RMD_OUT_EXT = docx
+
+DATAFILE=
+
+.PHONY: all
+all: report1.${R_OUT_EXT} report2.${RMD_OUT_EXT}
+
+## report2
+report2.${R_OUT_EXT}: ${@:${RMD_OUT_EXT}=.Rmd} analysis.${R_OUT_EXT}
+
+## report1
+report1.${R_OUT_EXT}: ${@:${R_OUT_EXT}=.Rmd} analysis.${R_OUT_EXT}
+
+## analyse data
+analysis.${R_OUT_EXT}: ${@:${R_OUT_EXT}=.R} read.${R_OUT_EXT}
+
+## read data
+read.${R_OUT_EXT}: ${@:${R_OUT_EXT}=.R} ${DATAFILE}
+
+## unclude pattern rules
+include ~/lib/r-rules.mk

@@ -1,0 +1,16 @@
+Installing Makfile templates
+---------------------------
+
+Note: Be careful because you don't want to accidentally overwrite
+customised versions.
+
+DEST_DIR=~/lib/makeTemplates
+EXCLUDE='--exclude=.DS_Store --exclude=*~'
+
+## Can use the following command to check what will happen
+
+rsync --dry-run -auvtr * ${DEST_DIR} ${EXCLUDE}
+
+## Once your happy then use:
+
+rsync -auvtr * ${DEST_DIR} ${EXCLUDE}

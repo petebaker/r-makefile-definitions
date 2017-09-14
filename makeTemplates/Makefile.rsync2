@@ -1,0 +1,23 @@
+## File: Makefile.rsync2
+##
+## What: Makefile template to rsync current directory to specified
+##       directories with flags
+
+.PHONY: all
+all: testall
+
+testall: rsynctest rsynctest2
+copyall: rsynccopy rsynccopy2
+
+## testall: rsynctest
+## copyall: rsynccopy
+
+include ~/lib/r-rules.mk
+
+DEST_DIR=project/dataAnalysis3
+
+## Cloudstation (also used for retrieval)
+RSYNC_DESTINATION=~/CloudStation/work/${DEST_DIR}
+
+## ownCloud (secondary backup) not used
+RSYNC_DESTINATION2=~/ownCloud/Backup/Work/${DEST_DIR}
