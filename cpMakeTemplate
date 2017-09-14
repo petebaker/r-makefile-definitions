@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# Filename: cpMakeTemplate
+# Purpose: copy a makefile template to 'Makefile' in current directory
+#
+# To make file executable in terminal use:  chmod +x cpMakeTemplate
+
+# Created at:  Thurs 2017-09-14 at 21:57:08
+# Author:      Peter Baker
+# Hostname:    clearwell2.fritz.box
+# Directory:   ~/dev.r-makefile-definitions
+#              should be placed in PATH eg ~/bin
+# Licence:     GPLv3 see <http://www.gnu.org/licenses/>
+#
+# Platform:     Not specified - linux at least but nay bash shell should work
+#
+# Based on pp 7-8 of Randal K Michael (2008) Mastering UNIX Shell Scripting
+#
+# set -n  # Uncomment to check script syntax, without extension
+#         # NOTE: Do not forget to put the comment back in or
+#         #       the shell script wil not execute
+# set -x  # Uncomment to debug this shell script
+#
+# Change Log: First version
+#
+#
+######################################################################
+#          Define files and variables here                           #
+######################################################################
+
+## template files for creating feedback
+SRC_DIR=${HOME}/lib/makeTemplates
+## SRC_DIR=.                               # for development only
+MAKEF=Makefile
+R_1=Makefile.rsync
+R_2=Makefile.rsync2
+MAKEF_R=Makefile.runR
+
+## TODO this should be an argument to script so if not . creates new dir etc
+DESTINATION=Makefile 
+
+######################################################################
+#          Define functions here                                     #
+######################################################################
+
+usage() { echo "Usage: $0 [-s source dir] [-m|-1|-2|-r] [-d name]" 1>&2; exit 1; }
+
+
+######################################################################
+#          Beginning of MAIN                                         #
+######################################################################
+
+
+## process command line args - see pp 33-34 Michael (2008)
+
+if [[ $1 == "" ]]; then
+     FILE2COPY=${MAKEF_R}
+else
+   #parse options with getopts code block here;
+while getopts :s:hm12r PARS 2>/dev/null
+do
+    case $PARS in
+	s) SRC_DIR=$OPTARG
+	   ;;
+	m) FILE2COPY=${MAKEF}
+	   ;;
+	1) FILE2COPY=${R_1}
+	   ;;
+	2) FILE2COPY=${R_2}
+	   ;;
+	r) FILE2COPY=${MAKEF_R}
+	   ;;
+	d) DESTINATION=${OPTARG}
+	   ;;
+	h|\?)
+	    usage
+	    exit 1
+	    ;;
+	*)
+	    FILE2COPY=${MAKEF_R}
+	    ;;
+    esac
+done
+fi
+
+cp -iaP ${SRC_DIR}/${FILE2COPY} ${DESTINATION}
+
+echo Makefile successfully created in current directory
+echo ""
+echo Check file and run make when OK

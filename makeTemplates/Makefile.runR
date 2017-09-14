@@ -21,7 +21,7 @@ DATAFILE=
 all: report1.${R_OUT_EXT} report2.${RMD_OUT_EXT}
 
 ## report2
-report2.${R_OUT_EXT}: ${@:${RMD_OUT_EXT}=.Rmd} analysis.${R_OUT_EXT}
+report2.${RMD_OUT_EXT}: ${@:${RMD_OUT_EXT}=.Rmd} analysis.${R_OUT_EXT}
 
 ## report1
 report1.${R_OUT_EXT}: ${@:${R_OUT_EXT}=.Rmd} analysis.${R_OUT_EXT}
