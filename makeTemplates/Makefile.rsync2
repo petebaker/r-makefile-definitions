@@ -8,6 +8,8 @@ all: testall
 
 testall: rsynctest rsynctest2
 copyall: rsynccopy rsynccopy2
+test2here: rsynctest2here
+copy2here: rsynccopy2here
 
 ## testall: rsynctest
 ## copyall: rsynccopy
