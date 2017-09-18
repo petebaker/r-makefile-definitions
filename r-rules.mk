@@ -481,11 +481,11 @@ rsynccopy2:
 ## rsync 1st remote to local ------
 .PHONY: rsynctest2here
 rsynctest2here:
-	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
+	${RSYNC} ${RSYNC_DRY_RUN} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} . ${RSYNC_FLAGS_POST}
 
 .PHONY: rsynccopy2here
 rsynccopy2here:
-	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} .
+	${RSYNC} ${RSYNC_FLAGS} ${RSYNC_DESTINATION}/${RSYNC_FILES_REMOTE} . ${RSYNC_FLAGS_POST}
 
 ## -----------------------------------------------------------
 ## git  ------------------------------------------------------
