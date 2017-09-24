@@ -14,6 +14,7 @@ copy2here: rsynccopy2here
 ## testall: rsynctest rsynctest2
 ## copyall: rsynccopy rsynccopy2
 
+## RSYNC_FLAGS = -auvtr --progress
 ## RSYNC_FLAGS_POST = --exclude=.DS_Store --delete
 
 include ~/lib/r-rules.mk
