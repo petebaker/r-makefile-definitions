@@ -18,7 +18,7 @@ include ../r-rules.mk
 ## remove all target, output and extraneous files
 .PHONY: cleanall
 cleanall:
-	rm -f *~ *.Rout *.RData *.docx *.pdf *.html *-syntax.R
+	rm -f *~ *.Rout *.RData *.docx *.pdf *.html *-syntax.R *.RData
 
 ## R syntax files from .Rmd files - these are default in r-rules.mk
 ## report1-syntax.R: report1.Rmd
