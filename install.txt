@@ -1,0 +1,55 @@
+Installing Makfile pattern rules, templates and beamer templates
+----------------------------------------------------------------
+
+Note: Be careful because you don't want to accidentally overwrite
+existing customised versions. This is why I don't supply an
+installation script
+
+If you are concerned that you may overwrite customised pattern rules
+or your own Makfile templates or beamer stubs then you can check for
+differences with the bash script:
+
+./checkInstalled
+
+For help use ./checkInstalled -h
+
+# Variables for rsyncing files to ~/lib 
+
+DEST_DIR=~/lib
+BIN_DIR=~/bin
+EXCLUDE='--exclude=.DS_Store --exclude=*~'
+
+## Pattern rule .mk files to be installed
+MK_FILES='r-rules-functions.mk r-rules.mk'
+
+## Makefile template files for comparison
+SRC_TEMPLATES=makeTemplates 
+## Beamer template files for comparison
+SRC_BEAMER=beamerPreamble
+## scripts
+BASH_SCRIPTS=cpMakeTemplate
+
+## Can use the following commands to check what will happen
+
+## pattern rules
+rsync --dry-run -auvtr ${MK_FILES} ${DEST_DIR}/. ${EXCLUDE}
+## scripts
+rsync --dry-run -auvtr ${BASH_SCRIPTS} ${BIN_DIR}/. ${EXCLUDE}
+## Makefile templates
+rsync --dry-run -auvtr ${SRC_TEMPLATES} ${DEST_DIR}/. ${EXCLUDE}
+## Beamer stubs/templates
+rsync --dry-run -auvtr ${SRC_BEAMER} ${DEST_DIR}/. ${EXCLUDE}
+
+
+## Once your happy then use one or all of these:
+
+## pattern rules
+rsync  -auvtr ${MK_FILES} ${DEST_DIR}/. ${EXCLUDE}
+## scripts
+rsync  -auvtr ${BASH_SCRIPTS} ${BIN_DIR}/. ${EXCLUDE}
+## Makefile templates
+rsync  -auvtr ${SRC_TEMPLATES} ${DEST_DIR}/. ${EXCLUDE}
+## Beamer stubs/templates
+rsync  -auvtr ${SRC_BEAMER} ${DEST_DIR}/. ${EXCLUDE}
+
+## PB: 2017-09-29 at 15:01:25
