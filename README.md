@@ -144,3 +144,5 @@ Definitions in 'r-rules.mk' have been developed and tested on linux. To a limite
 Extra rules for SAS, STATA, PSPP, python and perl are very preliminary and not extensively tested.
 
 Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
+
+Finally, there are two bash scripts to help use these R pattern rules. Firstly,  'checkInstalled' checks that the pattern rules, Makefile templates etc in ~/lib or ~/bin are the same and highlights differences using the unix command 'diff'.The 'cpMakeTemplate' bash script can be put in your path to copy a Makefile template to the current directory. Several templates are available. Please see 'cpMakeTemplate -h' and 'checkInstalled -h' for details. The file 'install.txt' gives advice and some commands for installing these files to make them readily available.
