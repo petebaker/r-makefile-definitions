@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Filename: cpMakeTemplate
-# Purpose: copy a makefile template to 'Makefile' in current directory
+# Filename: checkInstalled
+# Purpose: Rough check of installed files from r-makefile-definitions
 #
-# To make file executable in terminal use:  chmod +x cpMakeTemplate
+# To make file executable in terminal use:  chmod +x checkInstalled
 
-# Created at:  Thurs 2017-09-14 at 21:57:08
+# Created at:  Frid 2017-09-29 at 13:04:11
 # Author:      Peter Baker
 # Hostname:    clearwell2.fritz.box
 # Directory:   ~/dev/r-makefile-definitions
@@ -22,35 +22,32 @@
 # set -x  # Uncomment to debug this shell script
 #
 # Change Log: First version
-#             2017-09-29 at 14:38:52 better help message and fixed defaults
 #
 #
 ######################################################################
 #          Define files and variables here                           #
 ######################################################################
 
-## template files for creating feedback
-SRC_DIR=${HOME}/lib/makeTemplates
-## SRC_DIR=.                               # for development only
-MAKEF=Makefile
-R_1=Makefile.rsync
-R_2=Makefile.rsync2
-MAKEF_R=Makefile.runR
+## Pattern rule .mk files to be compared
+SRC_DIR=.
+LIB_DIR=${HOME}/lib
+MK_FILES='r-rules-functions.mk r-rules.mk'
 
-FILE2COPY=${MAKEF_R}
+## Makefile template files for comparison
+SRC_TEMPLATES=makeTemplates 
+DEST_TEMPLATES=${LIB_DIR}/${SRC_TEMPLATES}
+TEMPLATES='install.txt Makefile Makefile.rsync Makefile.rsync2 Makefile.runR'
 
-## TODO this should be an argument to script so if not . creates new dir etc
-DESTINATION=Makefile 
+## Beamer template files for comparison
+SRC_BEAMER=beamerPreamble
+DEST_BEAMER=${LIB_DIR}/${SRC_BEAMER}
+BEAMER_TEMPLATES='b1.Rnw Makefile preambleHandout.Rnw preamblePresent.Rnw b2.rnw preambleArticle.Rnw preambleNotes.Rnw preambleSlides.Rnw'
 
 ######################################################################
 #          Define functions here                                     #
 ######################################################################
 
-usage() { echo "Usage: $0 [-s source dir] [-m|-1|-2|-r] [-d name]"; \
-	  echo " -m standard simple Makefile for using R"; \
-	  echo " -1 copy Makefile for rsync to/from 1 destination" ; \
-	  echo " -2 copy Makefile for rsync to/from 2 destinations" ; \
-	  echo " -r Makefile for using R but changing output extension (Default)" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s source dir] [-l libDirectory]" 1>&2; exit 1; }
 
 
 ######################################################################
@@ -61,37 +58,41 @@ usage() { echo "Usage: $0 [-s source dir] [-m|-1|-2|-r] [-d name]"; \
 ## process command line args - see pp 33-34 Michael (2008)
 
 if [[ $1 == "" ]]; then
-     FILE2COPY=${MAKEF_R}
+     echo Comparing Files:
 else
    #parse options with getopts code block here;
-while getopts :sd:hm12r PARS 2>/dev/null
+while getopts :sl:h PARS 2>/dev/null
 do
     case $PARS in
 	s) SRC_DIR=$OPTARG
 	   ;;
-	m) FILE2COPY=${MAKEF}
-	   ;;
-	1) FILE2COPY=${R_1}
-	   ;;
-	2) FILE2COPY=${R_2}
-	   ;;
-	r) FILE2COPY=${MAKEF_R}
-	   ;;
-	d) DESTINATION=${OPTARG}
+	l) LIB_DIR=$OPTARG
 	   ;;
 	h|\?)
 	    usage
 	    exit 1
 	    ;;
 	*)
-	    FILE2COPY=${MAKEF_R}
+	    usage
+	    exit 1
 	    ;;
     esac
 done
 fi
 
-cp -iaP ${SRC_DIR}/${FILE2COPY} ${DESTINATION}
-
-echo ${DESTINATION} successfully created in current directory
 echo ""
-echo Check file and run make when OK
+echo Comparing pattern rule files
+for F in ${MK_FILES}; do echo $F; diff ${SRC_DIR}/$F ${LIB_DIR}/$F; done
+
+echo ""
+echo Comparing Makefile templates
+for F in ${TEMPLATES}; do echo $F; diff ${SRC_TEMPLATES}/$F ${DEST_TEMPLATES}/$F; done
+
+echo ""
+echo Comparing Beamer templates
+for F in ${BEAMER_TEMPLATES}; do echo $F; diff ${SRC_BEAMER}/$F ${DEST_BEAMER}/$F; done
+
+echo ""
+echo If necessary, use meld or rsync etc to bring library versions up to date
+echo "NB:   Be careful not to modify any fles you have customised"
+
