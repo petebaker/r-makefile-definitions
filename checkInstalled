@@ -47,13 +47,14 @@ BEAMER_TEMPLATES='b1.Rnw Makefile preambleHandout.Rnw preamblePresent.Rnw b2.rnw
 #          Define functions here                                     #
 ######################################################################
 
-usage() { echo "Usage: $0 [-s source dir] [-l libDirectory]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s source dir] [-l libDirectory] [-p] [-m] [-b]";\
+	  echo "Defaults: source dir is '.', libDirectory ~/lib"; \
+	  echo " -p, -m, -b: turn off comparing pattern rules, makefiles, beamers" 1>&2; exit 1; }
 
 
 ######################################################################
 #          Beginning of MAIN                                         #
 ######################################################################
-
 
 ## process command line args - see pp 33-34 Michael (2008)
 
@@ -61,12 +62,18 @@ if [[ $1 == "" ]]; then
      echo Comparing Files:
 else
    #parse options with getopts code block here;
-while getopts :sl:h PARS 2>/dev/null
+while getopts :sl:hpmb PARS 2>/dev/null
 do
     case $PARS in
 	s) SRC_DIR=$OPTARG
 	   ;;
 	l) LIB_DIR=$OPTARG
+	   ;;
+	p) PATOFF=1
+	   ;;
+	m) MAKOFF=1
+	   ;;
+	b) BMROFF=1
 	   ;;
 	h|\?)
 	    usage
@@ -81,18 +88,30 @@ done
 fi
 
 echo ""
-echo Comparing pattern rule files
-for F in ${MK_FILES}; do echo $F; diff ${SRC_DIR}/$F ${LIB_DIR}/$F; done
+if [[ $PATOFF == "1" ]]; then
+     echo "Pattern rule files not compared."
+else
+    echo Comparing pattern rule files in ${LIB_DIR}:
+    for F in ${MK_FILES}; do echo +++ File: $F; diff ${SRC_DIR}/$F ${LIB_DIR}/$F; done
+fi
 
 echo ""
-echo Comparing Makefile templates
-for F in ${TEMPLATES}; do echo $F; diff ${SRC_TEMPLATES}/$F ${DEST_TEMPLATES}/$F; done
+if [[ $MAKOFF == "1" ]]; then
+     echo "Makefile templates not compared."
+else
+    echo Comparing Makefile templates in ${DEST_TEMPLATES}:
+    for F in ${TEMPLATES}; do echo +++ File: $F; diff ${SRC_TEMPLATES}/$F ${DEST_TEMPLATES}/$F; done
+fi
 
 echo ""
-echo Comparing Beamer templates
-for F in ${BEAMER_TEMPLATES}; do echo $F; diff ${SRC_BEAMER}/$F ${DEST_BEAMER}/$F; done
+if [[ $BMROFF == "1" ]]; then
+     echo "Beamer templates, stubs and examples not compared."
+else
+    echo Comparing Beamer templatesin ${DEST_BEAMER}:
+    for F in ${BEAMER_TEMPLATES}; do echo +++ File: $F; diff ${SRC_BEAMER}/$F ${DEST_BEAMER}/$F; done
+fi
 
 echo ""
-echo If necessary, use meld or rsync etc to bring library versions up to date
+echo If necessary, use cp, meld or rsync etc to bring library versions up to date
 echo "NB:   Be careful not to modify any fles you have customised"
 
