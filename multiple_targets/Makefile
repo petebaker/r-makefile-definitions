@@ -13,13 +13,13 @@ all: plots.Rout plots0.png plots1.pdf plots2.jpg
 ## NB: first argument: space separated list of target files
 ##     second   "    : dependency files
 $(call atomic,plots.Rout plots0.png plots1.pdf plots2.jpg,\
-  plots.R ../simple_demo/simple.RData)
+  plots.R simple.RData)
 	${R} ${R_FLAGS} ${R_OPTS} $<
 
 ## remove all target, output and extraneous files
 .PHONY: cleanall
 cleanall:
-	rm -f *~ *.Rout *.png *.pdf *.jpg *.RData .sentinel* .Rhistory
+	rm -f *~ *.Rout *.png *.pdf *.jpg .sentinel* .Rhistory
 
 ## include R pattern rule definitions from file in $HOME/lib
 include ../r-rules.mk

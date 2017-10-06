@@ -16,7 +16,7 @@
 library(ggplot2)
 
 ## load data and check attributes ----------------------------------
-load("../simple_demo/simple.RData")
+load("simple.RData")
 ls.str()
 comment(sim1)
 
