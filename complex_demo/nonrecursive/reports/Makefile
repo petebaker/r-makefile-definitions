@@ -8,16 +8,16 @@ _ROOT := $(patsubst %/root.mk,%,$(call _find,$(CURDIR),root.mk))
 ## if not top level Makefile define RELATIV=.. otherwise RELATIV=.
 RELATIV = ../
 
+.PHONY: all
+all: all_reports
+
 ## include common definitions for directory variables and .R/.Rmd outfiles 
 include $(_ROOT)/root.mk
 
 ## the include files do the work
 include module.mk
-include ../analysis/module.mk
-include ../readMergeData/module.mk
-
-.PHONY: all
-all: all_reports
+include ${ANALYSIS}/module.mk
+include ${READ}/module.mk
 
 ## remove intermediate files
 .PHONY: cleanall

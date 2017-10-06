@@ -11,12 +11,12 @@ RELATIV = ../
 ## include common definitions for directory variables and .R/.Rmd outfiles 
 include $(_ROOT)/root.mk
 
-## the include files do the work
-include module.mk
-include ../readMergeData/module.mk
-
 .PHONY: all
 all: all_analysis
+
+## the include files do the work
+include module.mk
+include ${READ}/module.mk
 
 ## remove intermediate files
 .PHONY: cleanall

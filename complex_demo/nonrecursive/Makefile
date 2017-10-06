@@ -11,19 +11,19 @@ RELATIV = ./
 ## include definitions of rules and filename extensions for .R and .Rmd
 include root.mk
 
-## all subdirectories - note order reports, analyses and read
-SUBDIRS=$(REPORTS) $(ANALYSIS)  $(READ)
+## all subdirectories
+SUBDIRS=$(REPORTS_SUB) $(ANALYSIS_SUB) $(READ_SUB)
+
+## Makefile target
+.PHONY: all
+all: all_$(READ_SUB)  all_$(ANALYSIS_SUB) all_$(REPORTS_SUB)
 
 ## include module.mk files in sub directories
 ## NB: addsuffix described pp 74 Mecklenburg and used pp 98 Graham-Cummings
 ##     for non-recursive make
 include $(addsuffix /module.mk,$(SUBDIRS))
 
-## Makefile target
-.PHONY: all
-all: all-$(SUBDIRS)
-
-## clean intermediate files using explicit woldcarding in shell
+## clean intermediate files using explicit wildcarding in shell
 .PHONY: cleanall
 cleanall:
 	${RM} */*.Rout */*.pdf */.*.html */*.docx */*.odt data/derived/* *.Rout *.pdf *.html *.odt *.docx

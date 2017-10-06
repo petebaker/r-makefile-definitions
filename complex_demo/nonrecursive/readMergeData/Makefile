@@ -8,14 +8,14 @@ _ROOT := $(patsubst %/root.mk,%,$(call _find,$(CURDIR),root.mk))
 ## if not top level Makefile define RELATIV=.. otherwise RELATIV=.
 RELATIV = ../
 
+.PHONY: all
+all: all_readMergeData
+
 ## include common definitions for directory variables and .R/.Rmd outfiles 
 include $(_ROOT)/root.mk
 
 ## include targets/dependencies
 include module.mk
-
-.PHONY: all
-all: all_readMerge
 
 ## local cleanall
 .PHONY: cleanall
