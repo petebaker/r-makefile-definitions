@@ -7,15 +7,10 @@
 ##       in the file module.mk which is included either in the Makefile
 ##       in the root directory or the major subdirectories
 
-## (sub) directories definition
-READ_SRC=readMergeData
-ANALYSIS_SRC=analysis
-REPORTS_SRC=reports
-
-## main directories where the actual work is done
-READ=${RELATIV}${READ_SRC}
-ANALYSIS=${RELATIV}${ANALYSIS_SRC}
-REPORTS=${RELATIV}${REPORTS_SRC}
+## main (sub)directories where the actual work is done
+READ=${RELATIV}readMergeData
+ANALYSIS=${RELATIV}analysis
+REPORTS=${RELATIV}reports
 
 ## data directories for original and derived data files
 DATA=${RELATIV}data

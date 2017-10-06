@@ -8,10 +8,6 @@ _ROOT := $(patsubst %/root.mk,%,$(call _find,$(CURDIR),root.mk))
 ## relative directories?? needed?? base or sub by 1
 RELATIV = ./
 
-## programs
-MAKE=gmake
-RM = rm -f
-
 ## include definitions of rules and filename extensions for .R and .Rmd
 include root.mk
 
@@ -33,3 +29,8 @@ cleanall:
 	${RM} */*.Rout */*.pdf */.*.html */*.docx */*.odt data/derived/* *.Rout *.pdf *.html *.odt *.docx
 
 include ~/lib/r-rules.mk
+
+## programs
+MAKE=gmake
+RM = rm -f
+
