@@ -14,10 +14,12 @@ copy2here: rsynccopy2here
 ## testall: rsynctest rsynctest2
 ## copyall: rsynccopy rsynccopy2
 
+include ~/lib/r-rules.mk
+
+## NB: Customisations should be make after including r-rules.mk
+
 ## RSYNC_FLAGS = -auvtr --progress
 ## RSYNC_FLAGS_POST = --exclude=.DS_Store --delete
-
-include ~/lib/r-rules.mk
 
 ## Cloudstation (also used for retrieval)
 RSYNC_DESTINATION=~/CloudStation/work/project/dataAnalysis3

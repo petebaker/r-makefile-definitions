@@ -14,10 +14,12 @@ copy2here: rsynccopy2here
 ## testall: rsynctest
 ## copyall: rsynccopy
 
+include ~/lib/r-rules.mk
+
+## NB: Customisations should be make after including r-rules.mk
+
 ## RSYNC_FLAGS = -auvtr --progress
 ## RSYNC_FLAGS_POST = --exclude=.DS_Store --delete
-
-include ~/lib/r-rules.mk
 
 DEST_DIR=project/dataAnalysis3
 
