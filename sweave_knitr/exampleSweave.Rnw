@@ -1,0 +1,156 @@
+%% File: http://bcb.dfci.harvard.edu/F~aedin/Fcourses/FReproducibleResearch/FRR/FexampleSweave.Rnw
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{times}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+
+%------------------------------------------------------------
+% newcommand
+%------------------------------------------------------------
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rpackage}[1]{\textit{#1}}
+\newcommand{\Rexpression}[1]{\texttt{#1}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+
+\begin{document}
+
+%------------------------------------------------------------
+\title{Simple example of Sweave}
+%------------------------------------------------------------
+\author{Aedin Culhane}
+%\date{}
+
+\SweaveOpts{highlight=TRUE, tidy=TRUE, keep.space=TRUE, keep.blank.space=FALSE, keep.comment=TRUE}
+\SweaveOpts{prefix.string=Fig}
+
+
+\maketitle
+\tableofcontents
+
+
+%-------------------------------------------
+\section{Introduction}
+%--------------------------------------------
+
+Just a simple introduction to Sweave. 
+
+<<test1>>=
+a=1
+b=4
+a+b
+print("hello")
+@
+
+We can call R commands from the text. For example a+b= \Sexpr{a+b}
+
+%-------------------------------------------
+\section{Including a Plot}
+%--------------------------------------------
+Now for a plot.  Note we include fig=TRUE, which prints the plot within the document
+
+
+<<test2, fig=TRUE>>=
+plot(1:10, col="red", pch=19)
+@
+
+Thats it.... simple hey!
+
+
+%------------------------------------
+\subsection{More on Plots}
+%-------------------------------------
+
+To make the plot a little nicer, we can add a caption. Also lets change the size of the plot to be 4" in height and 6" in width
+
+\begin{figure}
+<<test3, fig=TRUE, height=4, width=6>>=
+par(mfrow=c(1,2))
+plot(1:10, col="green", pch=21)
+barplot(height=sample(1:10,5), names=LETTERS[1:5], col=1:5)
+@
+
+\caption{Plot of 1:10 and a bar plot beside it in a figure that is 4x6 inches}
+
+\end{figure}
+
+\newpage
+%------------------------------------
+\subsection{Creating a table}
+%-------------------------------------
+
+Lets include a table using the dataset,  which is included in the default core installation of R. It contains the height and weight of 15 women.
+
+<<women>>=
+require(xtable)
+myTable<-summary(women)
+@
+
+We can manually encode a table in latex 
+
+
+\begin{center}
+\begin{tabular}{rrrrrrrr} 
+
+<<manualtab, results=tex,echo=FALSE>>=
+nr = nrow(myTable); nc = ncol(myTable)
+for (i in 1:nr)
+  for(j in 1:nc) {
+    cat("$", myTable[i,j], "$")
+    if(j < nc)
+    cat("&")
+    else
+    cat("\\\\\n")
+  }
+@
+\end{tabular}
+\end{center}
+
+But it is much easier to use the package \Rpackage{xtable}. We use the function \Rfunction{require} to load the package.
+
+<<xtable1, results=tex>>=
+xtab<-xtable(myTable)
+print(xtab, floating=FALSE)
+@
+
+
+%------------------------------------
+\subsection{More on tables}
+%-------------------------------------
+
+Let make the table nice.  Lets exclude the row numbers and include a caption on the table. We can also tag the table so we reference Table~\ref{Table:women} in the text
+
+
+<<xtable2, results=tex>>=
+xtab2<-xtable(myTable, caption="Summary of women data",  label="Table:women")
+print(xtab2,include.rownames = FALSE)
+@
+
+\newpage
+%------------------------------------
+%handy to include this at the end
+%------------------------------------
+\section{SessionInfo}
+%-------------------------------------
+
+<<sessionInfo>>=
+
+sessionInfo();
+
+@ 
+
+\end{document}

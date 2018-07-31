@@ -1,0 +1,124 @@
+#+BEGIN_COMMENT
+## Filename:    notes.org
+## Hostname:    peterbakerlinux.sph.uq.edu.au
+## Directory:   /home/pete/Data/dev/r-makefile-definitions/sweave_knitr/
+## Licence:     GPLv3 see <http://www.gnu.org/licenses/>
+## 
+## Created at:  Tue Jul 31 13:03:15 2018
+## Change Log: 
+## 
+#+END_COMMENT
+#+TITLE: Investigating how to handle sweave/knitr pretty seamlessly
+#+AUTHOR: Peter Baker
+#+EMAIL: p.baker1@uq.edu.au
+#+TAGS: office(o) home(h) computer(c) graphicalModels(g) workFlow(w) music(m) band(b)
+#+SEQ_TODO: TODO(t) STARTED(s) WAITING(w) APPT(a) | DONE(d) CANCELLED(c) DEFERRED(f)
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/notebook.css" />
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+OPTIONS: H:2 num:nil toc:nil \n:nil @:t ::t |:t ^:{} _:{} *:t TeX:t LaTeX:t
+#+STARTUP: showall
+#+STARTUP: indent
+#+STARTUP: hidestars
+#+BABEL: :session *R* :cache yes :results output graphics :exports both :tangle yes
+
+So basically two things to do here. 
+
+* TODO knitr vs sweave
+
+eg sweave to produce pdf/html/odf and knitr produces a lot more
+
+* TODO .rst to various formats 
+
+(restructured text is used in python docs but what about in R?) 
+
+NB: could also have org if it worked which would be rather nice too
+
+* my simplistic approach
+
+** Experiment
+
+1st attempt /Copy and paste/
+
+That's where I'm up to at moment - I really should use *git branch*
+
+Don't really want to use
+
+%_knitr.pdf: %.Rnw
+%_sweave.pdf: %.Rnw 
+
+etc because then users would need to rewrite whole file structure
+which which is just silly
+
+Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
+            *sweave* foo.Rnw, exampleSweave.Rnw
+
+** Note on knitr engines
+
+> library(knitr)
+> names(knit_engines$get())
+ [1] "awk"       "bash"      "coffee"    "gawk"      "groovy"    "haskell"  
+ [7] "lein"      "mysql"     "node"      "octave"    "perl"      "psql"     
+[13] "Rscript"   "ruby"      "sas"       "scala"     "sed"       "sh"       
+[19] "stata"     "zsh"       "highlight" "Rcpp"      "tikz"      "dot"      
+[25] "c"         "fortran"   "fortran95" "asy"       "cat"       "asis"     
+[31] "stan"      "block"     "block2"    "js"        "css"       "sql"      
+[37] "go"        "python"    "julia"    
+
+Need make (can use bash - sort of)
+
+** Can I have a makefile with both except where I use suffixes 
+
+*** need gnu make >=3.82 (latest macOS uses 3.81 yikes, )
+
+https://stackoverflow.com/questions/11455182/when-multiple-pattern-rules-match-a-target
+
+Q: this doesn't work even though it should - runs wrong one
+
+The GNU make manual says: It is possible that more than one pattern
+rule will meet these criteria. In that case, make will choose the rule
+with the shortest stem (that is, the pattern that matches most
+specifically).
+
+$ cat Makefile.general_first
+%.o: %.cpp
+@echo using general rule
+$(CXX) -c $< -o $@
+
+%_specific.o: %_specific.cpp
+@echo using specific rule
+$(CXX) -c $< -o $@
+
+A: upgrade Make
+
+You are probably using a make version lower than 3.82.
+
+In version 3.81 and lower, the selection criterion was different
+
+** You can use .SECONDEXPANSION for this. Here's an executable example:
+
+https://stackoverflow.com/questions/27952558/make-pattern-rule-matching-multiple-extensions
+
+OBJ_DIR:=obj
+SRC_DIR:=src
+
+TARGETS:=obj/foo.o obj/bar.o
+
+all: $(TARGETS)
+
+.SECONDEXPANSION:
+$(OBJ_DIR)/%.o: $$(wildcard $(SRC_DIR)/%.cpp) $$(wildcard $(SRC_DIR)/%.cc)
+    @$(CXX) $(CPPFLAGS) -I. -o $@ -c $<
+
+** Conditional targets etc - use Example 7.1 from Make doc 
+
+libs_for_gcc = -lgnu
+normal_libs =
+
+foo: $(objects)
+ifeq ($(CC),gcc)
+        $(CC) -o foo $(objects) $(libs_for_gcc)
+else
+        $(CC) -o foo $(objects) $(normal_libs)
+endif
+
