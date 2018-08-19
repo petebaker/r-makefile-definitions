@@ -1,9 +1,10 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
-## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
+## Purpose: Define gnu make rules for R, Sweave, knitr, rmarkdown, sas,
+##          stata, PSPP, python, perl
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9010
+## Version: 0.2.9011
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -19,14 +20,25 @@
 
 ## use knitr or sweave for processing .Rnw files --------------------
 
-## Default: knitr
+## Default: knitr which works when blank
 ## SWEAVE_ENGINE=
 ## SWEAVE_ENGINE=Sweave
+
+## NB: you can change the default to Sweave below and use SWEAVE_ENGINE=knitr
+##     in the odd Makefile where all pdfs produced using knitr
 
 ## You can uncomment one of these lines to make the change permanent
 ## but then you CAN NOT override it in Makefile
 
-## A better solution is being worked on
+## Alternatively, leave SWEAVE_ENGINE unset and specify the targets
+## SWEAVE_PDF:  list of pdf files for processing with Sweave
+## KNITR_PDF:   list of pdf files for processing with knitr
+## SWEAVE_HTML: list of html files for processing with Sweave/R2HTML
+## KNITR_HTML:  list of  html files for processing with knitr
+
+## other files - eg rst??
+
+## END: use knitr or sweave for processing .Rnw files --------------------
 
 ## Changelog: None recorded until Frid 2015-02-06 at 15:40:21
 ##          On Frid 2015-02-06
@@ -85,6 +97,10 @@
 ##               NB: needs more work - initial idea only
 ##                   Also, needs HTML etc output added which will be an
 ##                   RSCRIPT call rather than command line processing
+##         Friday August 10 18:40 Version 0.2.9010
+##           1) added SWEAVE_ENGINE pdf using Sweave rules
+##         Friday August 17 2018-08-17 at 17:34:32
+##           1) Added SWEAVE_ENGINE option for Sweave and commented knitr eqiv
 
 ## EXTRA 1) proper documentation            2015-02-21 at 23:41:44
 ##       2) make knit more system independent
@@ -139,6 +155,8 @@ LATEX2RTF     = latex2rtf
 LATEXMK_PRE   =
 LATEXMK       = latexmk
 LATEXMK_OPTS = -pdf
+LATEXMK_CLEAN = -c
+
 ## rubber - latexmk alternative on linux systems only
 RUBBER    = $(R) CMD rubber
 RUB_FLAGS = -d
@@ -304,6 +322,10 @@ help-stitch:
 
 ## Not sure if this conflicts  ----- START
 
+## perhaps alternative way ifndef but blank SWEAVE_ENGINE works too
+##ifndef SWEAVE_ENGINE
+ifeq ($(SWEAVE_ENGINE), knitr)
+
 ## tex file from .Rnw - obsolete as now use rmarkdown=knit and pandoc
 %.tex: %.Rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
@@ -322,6 +344,7 @@ help-stitch:
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
 %.pdf: %.rnw
 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+endif
 ## Not sure if this conflicts  ----- END
 
 ## Uses latex2rtf but perhaps should use markdown/pandoc as better result 
@@ -801,6 +824,8 @@ help-sweave:
 
 ## may need to lowercase Sweave for windows etc users
 
+## SWEAVE_ENGINE is Sweave ---------------------------------------------
+
 ifeq ($(SWEAVE_ENGINE), Sweave)
 %.pdf: %.Rnw
 	${RWEAVE} $< ${RWEAVE_FLAGS}
@@ -809,3 +834,41 @@ ifeq ($(SWEAVE_ENGINE), Sweave)
 %.R: %.Rnw
 	${R} CMD Stangle $<
 endif
+
+## pdf from both Sweave and knitr in same Makefile ----------------------
+
+## use Hooking functions from Mecklenburg pp106-108
+
+define build-sweave
+	$(call build-sweave-hook,$@)
+endef
+
+define rsweavepdf
+	${RWEAVE} --pdf $< ${RWEAVE_FLAGS}
+	${RWEAVE} --clean  $<
+	${RM} ${RM_OPTS} ${<:.Rnw=.tex} ${<:.Rnw=.aux} ${<:.Rnw=.log}
+##      older suggestion from stack-overflow
+##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} ${<:.Rnw=}
+##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} --pdf ${<:.Rnw=}
+##	${LATEXMK} ${LATEXMK_CLEAN} ${<:.Rnw=.tex}
+endef
+
+define rknitrpdf
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+endef
+
+## $(sweave_rnw)
+$(sweave_pdf): build-sweave-hook = $(rsweavepdf) ##$1
+##$(sweave_pdf): foo.Rnw
+##	$(call build-sweave,$^)
+
+## $(sweave_pdf)
+$(knitr_pdf): build-sweave-hook = $(rknitrpdf) ##$1
+##$(knitr_pdf): knitr-minimal.Rnw
+%.pdf: %.Rnw  
+	$(call build-sweave,$^)
+##endif
+
+.PHONY: pdfs
+pdfs: $(sweave_pdf) $(knitr_pdf)
+	$(call build-sweave, $(sweave_rnw) $(knitr_rnw))
