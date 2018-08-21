@@ -1,0 +1,45 @@
+## File: Makefile.sweave
+
+## Typical Makefile for use with R CMD Sweave and also for testing
+## 
+##   - take a copy and modify as necessary, eg
+##   $  make -n -f Makefile.sweave  [targets] 
+##
+## NB: DANGER: be very careful with 'make clean-all' which deletes
+##     .tex, .R etc files which may not be what you want
+
+## include gmsl # standard library if you wish to program Make more easily
+
+## pdf outputs for R CMD Sweave since foo.Rnw exampleSweave.Rnw for Sweave
+## foo.pdf exampleSweave.pdf
+
+##RSWEAVEPDF=foo.pdf exampleSweave.pdf
+
+.PHONY: all
+all: foo.pdf exampleSweave.pdf # foo_syntax.R exampleSweave_syntax.R 
+
+## Downloaded: *sweave* foo.Rnw, exampleSweave.Rnw
+##             See files for details/URL
+
+## explicit definitions which are essentially unnecessary here
+foo.pdf: foo.Rnw
+foo_syntax.R: foo.Rnw
+exampleSweave.pdf: exampleSweave.Rnw
+exampleSweave_syntax.R: exampleSweave.Rnw
+
+SWEAVE_ENGINE=Sweave
+include r-rules.mk
+
+.PHONY: clean-all
+clean-all:
+	latexmk -c -f *.tex
+	rm -f *.pdf *.Rout *.log *.aux *.bbl *~ *.html *.docx *.out *.tex *.toc *.R
+
+## cleaning latex files up ------------------------------------------;
+
+## NB: to clean up Sweave/latex auxillary files you need to use the -f
+## option to force clean since .tex file removed - need to use ifdef
+## on that too (might need for debugging) so use
+
+## latexmk -c -f exampleSweave
+## latexmk -c -f foo

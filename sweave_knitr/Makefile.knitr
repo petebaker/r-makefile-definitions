@@ -1,4 +1,6 @@
-## Typical rules for use with R - both knitr and sweave format .Rnw files 
+## File: Makefile.knitr
+
+## Typical rules for use with R - knitr only (default) and also for testing
 ## 
 ##   - take a copy and modify as necessary
 ##   - ideally put modified copy in a directory you access often or write
@@ -6,14 +8,8 @@
 
 ## include gmsl # standard library if you wish to program Make more easily
 
-## pdf outputs
-RKNITR_PDF=knitr-minimal.pdf 002-minimal.pdf
-RSWEAVE_PDF=foo.pdf exampleSweave.pdf
-
-## to do - .R outputs !!
-
 .PHONY: all
-all: foo.pdf exampleSweave.pdf knitr-minimal.pdf 002-minimal.pdf
+all:  knitr-minimal.pdf 002-minimal.pdf
 
 ## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
 ##            *sweave* foo.Rnw, exampleSweave.Rnw

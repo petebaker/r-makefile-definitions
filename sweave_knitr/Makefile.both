@@ -1,0 +1,108 @@
+## Typical rules for use with R
+## 
+##   - take a copy and modify as necessary
+##   - ideally put modified copy in a directory you access often or write
+##     a script to grab a copy whenever you need
+
+## include gmsl # standard library
+
+## pdf outputs
+KNITR_PDF=knitr-minimal.pdf 002-minimal.pdf
+SWEAVE_PDF=foo.pdf exampleSweave.pdf
+##knitr_pdf=knitr-minimal.pdf
+##sweave_pdf=foo.pdf
+## pdf inputs
+##knitr_rnw=knitr-minimal.Rnw 002-minimal.Rnw
+##sweave_rnw=foo.Rnw exampleSweave.Rnw
+##knitr_rnw=knitr-minimal.Rnw
+##sweave_rnw=foo.Rnw
+
+.PHONY: all
+## all: foo.pdf  knitr-minimal.pdf
+all: foo.pdf exampleSweave.pdf knitr-minimal.pdf 002-minimal.pdf
+## all: $(knitr_pdf) $(sweave_pdf)
+
+## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
+##            *sweave* foo.Rnw, exampleSweave.Rnw
+##            See files for details/URL
+
+##.PHONY: sw
+##sw: foo.pdf exampleSweave.pdf
+
+##.PHONY: kn
+##kn: knitr-minimal.pdf 002-minimal.pdf
+
+: foo.pdf exampleSweave.pdf
+
+
+## explicit pdf
+foo.pdf: foo.Rnw
+exampleSweave.pdf: exampleSweave.Rnw
+knitr-minimal.pdf: knitr-minimal.Rnw
+002-minimal.pdf: 002-minimal.Rnw
+
+## use Hooking functions from Mecklenburg pp106-108
+
+## LATEXMK_CLEAN=-c# moved to r-rules.mk
+
+## include r-rules.mk
+
+##ifndef SWEAVE_ENGINE
+# define build-sweave
+# 	$(call build-sweave-hook,$@)
+# endef
+
+# define rsweavepdf
+# 	${RWEAVE} --pdf $< ${RWEAVE_FLAGS}
+# ##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} ${<:.Rnw=}
+# ##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} --pdf ${<:.Rnw=}
+# ##	${LATEXMK} ${LATEXMK_CLEAN} ${<:.Rnw=.tex}
+# 	${RWEAVE} --clean  $<
+# 	${RM} ${RM_OPTS} ${<:.Rnw=.tex} ${<:.Rnw=.aux} ${<:.Rnw=.log}
+# endef
+
+# define rknitrpdf
+# 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+# endef
+
+# ## $(sweave_rnw)
+# $(sweave_pdf): build-sweave-hook = $(rsweavepdf) ##$1
+# ##$(sweave_pdf): foo.Rnw
+# ##	$(call build-sweave,$^)
+
+# ## $(sweave_pdf)
+# $(knitr_pdf): build-sweave-hook = $(rknitrpdf) ##$1
+# ##$(knitr_pdf): knitr-minimal.Rnw
+# %.pdf: %.Rnw  
+# 	$(call build-sweave,$^)
+# ##endif
+
+# .PHONY: pdfs
+# pdfs: $(sweave_pdf) $(knitr_pdf)
+# 	$(call build-sweave, $(sweave_rnw) $(knitr_rnw))
+
+include r-rules.mk
+
+.PHONY: clean-all
+clean-all:
+	rm -f *.pdf *.Rout *.log *.aux *.bbl *~ *.html *.docx *.out *.tex *.toc *.R
+
+## cleaning latex files up ------------------------------------------;
+
+## NB: to clean up Sweave/latex auxillary files you need to use the -f
+## option to force clean since .tex file removed - need to use ifdef
+## on that too (might need for debugging) so use
+
+## latexmk -c -f exampleSweave
+## latexmk -c -f foo
+
+
+## global SWEAVE_ENGINE ----------------------------------------
+
+## first global attempt is now in r-rules.mk 2018-08-04 at 14:41:26
+
+## need a better way to define sweave versus knitr and programmatically too
+## set SWEAVE_ENGINE before calling file else doesn't work
+## could place at top of file if ALWAYS use it but not otherwise
+## SWEAVE_ENGINE=Sweave
+## include r-rules.mk
