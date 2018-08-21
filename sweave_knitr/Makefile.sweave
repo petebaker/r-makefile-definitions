@@ -16,16 +16,16 @@
 ##RSWEAVEPDF=foo.pdf exampleSweave.pdf
 
 .PHONY: all
-all: foo.pdf exampleSweave.pdf # foo_syntax.R exampleSweave_syntax.R 
+all: foo.pdf exampleSweave.pdf foo-syntax.R exampleSweave-syntax.R 
 
 ## Downloaded: *sweave* foo.Rnw, exampleSweave.Rnw
 ##             See files for details/URL
 
 ## explicit definitions which are essentially unnecessary here
 foo.pdf: foo.Rnw
-foo_syntax.R: foo.Rnw
+foo-syntax.R: foo.Rnw
 exampleSweave.pdf: exampleSweave.Rnw
-exampleSweave_syntax.R: exampleSweave.Rnw
+exampleSweave-syntax.R: exampleSweave.Rnw
 
 SWEAVE_ENGINE=Sweave
 include r-rules.mk

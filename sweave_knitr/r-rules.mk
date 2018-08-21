@@ -170,6 +170,8 @@ RUB_FLAGS = -d
 ## specific program variables - may need to redefine on other systems
 RM       = rm
 RM_OPTS  = -f
+MV       = mv
+MV_OPTS  = -f
 CAT      = cat
 CAT_OPTS =
 PDFJAM   = pdfjam
@@ -904,12 +906,16 @@ ifeq ($(SWEAVE_ENGINE), Sweave)
 ## produce R syntax from .Rnw etc
 %-syntax.R: %.Rnw
 	${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.Rnw=.R} $@
 %-syntax.R: %.rnw
-	${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.rnw=.R} $@
 %-syntax.r: %.Snw
-	${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.Snw=.R} $@
 %-syntax.r: %.snw
-	${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.snw=.R} $@
 endif
 
 ## help pdf from both Sweave and knitr in same Makefile ----------------------
@@ -927,8 +933,8 @@ help-both-sweave-knitr:
 	@echo "SWEAVE_PDF:  list of pdf files for processing .Rnw with Sweave"
 	@echo "KNITR_PDF:   list of pdf files from .Rnw with knitr"
 	@echo "KNITR_HTML:  list of html files from .Rnw with knitr"
-	@echo "SWEAVE_R: list of _syntax.R files from .Rnw using Stangle"
-	@echo "KNITR_R:  list of _syntax.R files from .Rnw using knitr purl"
+	@echo "SWEAVE_R: list of -syntax.R files from .Rnw using Stangle"
+	@echo "KNITR_R:  list of -syntax.R files from .Rnw using knitr purl"
 	@echo ""
 	@echo "## Example: files myknitr.Rnw and mySweave.Rnw in appropriate format"
 	@echo "SWEAVE_PDF: myknitr.pdf"
@@ -980,8 +986,10 @@ $(RKNITR_PDF):
 	$(call build-sweave,$^)
 
 
+## needs to be converted to hook style function with both Stangle and purl
+
 ## extract R syntax using knitr::purl ## declared above
-%-syntax.R: %.Rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
-%-syntax.R: %.rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+# %-syntax.R: %.Rnw
+# 	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+# %-syntax.R: %.rnw
+# 	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
