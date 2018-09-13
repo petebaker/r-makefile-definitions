@@ -22,11 +22,16 @@
 #+STARTUP: hidestars
 #+BABEL: :session *R* :cache yes :results output graphics :exports both :tangle yes
 
-So basically two things to do here. 
+So basically three things to do here. 
 
-* TODO knitr vs sweave
+* DONE knitr vs sweave for pdf
+- purely sweave or knitr format
+- mixture of sweave and knitr format
+- CLOSING NOTE [2018-09-13 Thu 16:20]
 
-eg sweave to produce pdf/html/odf and knitr produces a lot more
+* TODO knitr vs sweave for other formats
+
+eg sweave to produce html/odf and knitr produces a lot more
 
 * TODO .rst to various formats 
 

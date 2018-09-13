@@ -9,17 +9,17 @@
 ## include gmsl # standard library if you wish to program Make more easily
 
 .PHONY: all
-all:  knitr-minimal.pdf 002-minimal.pdf
+all:  knitr-minimal.pdf 002-minimal.pdf knitr-minimal-syntax.R 002-minimal-syntax.R
 
 ## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
 ##            *sweave* foo.Rnw, exampleSweave.Rnw
 ##            See files for details/URL
 
 ## explicit pdf but not necessary unless more dependencies
-foo.pdf: foo.Rnw
-exampleSweave.pdf: exampleSweave.Rnw
-knitr-minimal.pdf: knitr-minimal.Rnw
-002-minimal.pdf: 002-minimal.Rnw
+## foo.pdf: foo.Rnw
+## exampleSweave.pdf: exampleSweave.Rnw
+## knitr-minimal.pdf: knitr-minimal.Rnw
+## 002-minimal.pdf: 002-minimal.Rnw
 
 include r-rules.mk
 
@@ -27,11 +27,3 @@ include r-rules.mk
 clean-all:
 	rm -f *.pdf *.Rout *.log *.aux *.bbl *~ *.html *.docx *.out *.tex *.toc *.R
 
-## cleaning latex files up ------------------------------------------;
-
-## NB: to clean up Sweave/latex auxillary files you need to use the -f
-## option to force clean since .tex file removed - need to use ifdef
-## on that too (might need for debugging) so use
-
-## latexmk -c -f exampleSweave
-## latexmk -c -f foo

@@ -22,10 +22,10 @@ all: foo.pdf exampleSweave.pdf foo-syntax.R exampleSweave-syntax.R
 ##             See files for details/URL
 
 ## explicit definitions which are essentially unnecessary here
-foo.pdf: foo.Rnw
-foo-syntax.R: foo.Rnw
-exampleSweave.pdf: exampleSweave.Rnw
-exampleSweave-syntax.R: exampleSweave.Rnw
+## foo.pdf: foo.Rnw
+## foo-syntax.R: foo.Rnw
+## exampleSweave.pdf: exampleSweave.Rnw
+## exampleSweave-syntax.R: exampleSweave.Rnw
 
 SWEAVE_ENGINE=Sweave
 include r-rules.mk

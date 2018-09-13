@@ -1,9 +1,10 @@
 ## File:    r-rules.mk - to be included in Makefile(s)
-## Purpose: Define gnu make rules for R, knitr, Rmarkdown and Sweave
+## Purpose: Define gnu make rules for R, Sweave, Knitr, R Markdown, SAS,
+##          Stata, PSPP, Python, Perl
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9010
+## Version: 0.2.9013
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -17,16 +18,34 @@
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
 
-## use knitr or sweave for processing .Rnw files --------------------
+## NB: use knitr or sweave for processing .Rnw files --------------------
 
-## Default: knitr
+## Default: knitr which works when blank
 ## SWEAVE_ENGINE=
 ## SWEAVE_ENGINE=Sweave
 
-## You can uncomment one of these lines to make the change permanent
-## but then you CAN NOT override it in Makefile
+## NB: you can change the default to Sweave below and use SWEAVE_ENGINE=knitr
+##     in the odd Makefile where all pdfs produced using knitr
 
-## A better solution is being worked on
+## You can uncomment one of these lines to make the change permanent
+## but then you CAN NOT override it in Makefile but more generic coming soon
+
+## Alternatively, leave SWEAVE_ENGINE unset and specify the targets
+## SWEAVE_PDF:  list of pdf files for processing with Sweave
+## KNITR_PDF:   list of pdf files for processing with knitr
+## RSWEAVE_R:   list of -syntax.R files for processing with Sweave
+## RKNITR_R:    list of -syntax.R files for processing with knitr
+
+## see examples in sweave_knitr directory
+
+## Not implemented yet for HTML output (or other Sweave output)
+## would need some html example files to use 
+## SWEAVE_HTML: list of html files for processing with Sweave/R2HTML
+## KNITR_HTML:  list of  html files for processing with knitr
+
+## other files - eg rst, odfWeave, html via sweave etc etc??
+
+## END: use knitr or sweave for processing .Rnw files --------------------
 
 ## Changelog: None recorded until Frid 2015-02-06 at 15:40:21
 ##          On Frid 2015-02-06
@@ -68,9 +87,9 @@
 ##               sentinel and atomic for multiple targets
 ##               NB: Still need to add help, document and redo examples
 ##         Saturday 2017-06-03 at 10:05pm - Version 0.2.9007
-##            1) Added SAS, STATA, PSPP
+##            1) Added SAS, Stata, PSPP
 ##            2) Added python and perl
-##            NB: SAS, STATA, PSPP only simple testing on Windows/MacOSX
+##            NB: SAS, Stata, PSPP only simple testing on Windows/macOS
 ##         Friday 2017-06-30 12:30am - Version 0.2.9008
 ##            1) puts function definitions into separate file to define
 ##               functions at the start separately and override in Makefile
@@ -85,17 +104,55 @@
 ##               NB: needs more work - initial idea only
 ##                   Also, needs HTML etc output added which will be an
 ##                   RSCRIPT call rather than command line processing
+##         Friday August 10 18:40 Version 0.2.9010
+##           1) added SWEAVE_ENGINE pdf using Sweave rules
+##         Friday August 17 2018-08-17 at 17:34:32
+##           1) Added SWEAVE_ENGINE option for Sweave and commented knitr eqiv
+##         Tuesday August 21 2018-08-21 at 13:21:02- Version 0.2.9012
+##           1) added extra variables SWEAVE_PDF, KNITR_PDF etc to process
+##              .Rnw files from both knitr and sweave format files from
+##              same Makefile
+##              along with help-sweave and help-knitr etc targets
+##         Friday September 14 2018-09-14 at 00:16:55 - Version 0.2.9013
+##           1) Added R syntax targets for mixture of Sweave or knitr
+##           
 
-## EXTRA 1) proper documentation            2015-02-21 at 23:41:44
+## EXTRA 1) proper documentation started 2015-02-21 at 23:41:44 - ongoing
 ##       2) make knit more system independent
 ##          PARTIALLY DONE 2015-03-29 at 09:37:41
 ##          DONE 2016-06-19 at 18:45:02
 ##       3) generic clean/backup needs work (see just before multiple targets)
+##          but not high priority
+##       4) 2018-09-14 at 00:37:31  extra parameter variables for calling
+##          knitr as requested by bowerth on github.  Trouble is that he
+##          closed issue and I have discussion/details and
+##          I didn't have time to investigate back then
+##          Now I think this is better handled by target specific
+##          variables  eg.
+## should change r-rules.mk definition to something like this
+## %.pdf: %.Rmd
+##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRA})"
+## RMARKDOWN_PDF_EXTRA =
+## and in Makefile use something like
+## special1.pdf: RMARKDOWN_PDF_EXTRA += ", params = list(value_1 = \"a\", value_2 = \"b\")"
+## special1.pdf: special1.Rmd
+## special2.pdf: RMARKDOWN_PDF_EXTRA += ", params = list(value_1 = \"C2\", value_2 = \"D2\")"
+## special2.pdf: special2.Rmd
+## 
+## See page 50/51 Mecklenberg 3rd ed.
+## Section:  Target- and Pattern-Specific Variables
+## The general syntax for target-specific variables is:
+## target...: variable = value
+## target...: variable := value
+## target...: variable += value
+## target...: variable ?= value
+## Pattern-specific variables are similar, only they are specified in a
+##  pattern rule (see page 21) but thats for RMARKDOWN_PDF_EXTRA
 
 ## For .Rnw files I've changed the default to knit as that's what I
 ## usually want but to use Sweave then set SWEAVE_ENGINE to Sweave or
 ## uncomment appropriate lines below
-## KNIT not used but now used as it is now called inside Rscript
+## KNIT now called inside Rscript
 ## but could be changed if this way preferred
 ## note - may need to use this (or similar) instead if knit is not in path
 ## KNIT     = knit
@@ -105,12 +162,8 @@
 ## KNIT_FLAGS = -n -o
 ## %.md: %.Rmd
 ##	${KNIT} $@ ${KNIT_OPTS} $<
-##%.tex: %.Rnw
-##	${R} CMD Sweave $<
-##%.R: %.Rnw
-##	${R} CMD Stangle $<
 
-## program defs:
+## program defs - may prefer gmake for macOS
 ##MAKE      = make
 ##MAKE      = gmake
 
@@ -123,11 +176,13 @@ help:
 	@echo make help-r
 	@echo make help-stitch
 	@echo make help-rmarkdown
+	@echo make help-knitr
 	@echo make help-sweave
-	@echo make help-beamer
-	@echo make help-git
-	@echo make help-rsync
+	@echo make help-both-sweave-knitr
 	@echo make help-stats-others
+	@echo make help-beamer
+	@echo make help-rsync
+	@echo make help-git
 
 # latex variables ---------------------------------------------------
 
@@ -139,6 +194,8 @@ LATEX2RTF     = latex2rtf
 LATEXMK_PRE   =
 LATEXMK       = latexmk
 LATEXMK_OPTS = -pdf
+LATEXMK_CLEAN = -c
+
 ## rubber - latexmk alternative on linux systems only
 RUBBER    = $(R) CMD rubber
 RUB_FLAGS = -d
@@ -146,6 +203,8 @@ RUB_FLAGS = -d
 ## specific program variables - may need to redefine on other systems
 RM       = rm
 RM_OPTS  = -f
+MV       = mv
+MV_OPTS  = -f
 CAT      = cat
 CAT_OPTS =
 PDFJAM   = pdfjam
@@ -172,8 +231,12 @@ R_OPTS    = --vanilla
 RSCRIPT   = Rscript
 RSCRIPT_OPTS = --vanilla
 ##R_OPTS    = --no-save --no-restore --no-restore-history --no-readline
-RWEAVE    = $(R) CMD Sweave
-RWEAVE_FLAGS =
+RSWEAVE    = $(R) CMD Sweave
+RSWEAVE_FLAGS=
+RSWEAVE_CLEAN ?= yes
+RSWEAVE_CLEAN_FLAGS = --clean=keepOuts 
+RSTANGLE = $(R) CMD Stangle
+RSTANGLE_FLAGS=
 
 ## --------------------------------------------------------------
 ## R and Rmarkdown ----------------------------------------------
@@ -272,7 +335,7 @@ help-stitch:
 
 ## knit and rmarkdown pattern rules ----------------------------------
 
-## produce R syntax from .Rmd files - Note that .Rnw files in beamer section
+## produce R syntax from .Rmd files - Note that .Rnw files in knitr section
 ## %-syntax.R: %.Rmd
 ##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);purl(\"${@:.R=.Rmd}\")"
 ## %-syntax.R: %.rmd
@@ -302,27 +365,6 @@ help-stitch:
 ## %.tex: %.md
 # # 	${PANDOC} ${PANDOC_OPTS} $< -o $@
 
-## Not sure if this conflicts  ----- START
-
-## tex file from .Rnw - obsolete as now use rmarkdown=knit and pandoc
-%.tex: %.Rnw
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
-%.tex: %.rnw
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
-
-## Not sure if this conflicts
-##%.pdf : %.tex
-##	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $<
-##	${R} CMD ${LATEXMK} ${LATEXMK_FLAGS} $<
-
-## best to go to .pdf directly rather than creating .tex file
-## I am relying on the %.tex: %.Rnw being overriden but problematic if .tex file
-## hanging around due to crash - perhaps remove %.tex: %.[Rr]nw rules
-%.pdf: %.Rnw
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
-%.pdf: %.rnw
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
-## Not sure if this conflicts  ----- END
 
 ## Uses latex2rtf but perhaps should use markdown/pandoc as better result 
 %.rtf: %.tex
@@ -515,7 +557,7 @@ rsynccopy2here:
 .PHONY: help-git
 help-git:
 	@echo ""
-	@echo Version control using git
+	@echo Version control using git from Makefile
 	@echo ""
 	@echo $$ make git.status
 	@echo $$ make git.commit
@@ -530,8 +572,8 @@ help-git:
 	@echo See http://git-scm.com/doc or
 	@echo http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
 	@echo ""
-	@echo NB: It really is best to set up .git/config file and use git directly
-	@echo "    (or in RStudio or emacs)"
+	@echo NB: It really is best to set up .git/config file and use git 
+	@echo "   directly from command line (or in RStudio or emacs magit etc)"
 
 .PHONY: git.status
 git.status:
@@ -640,12 +682,6 @@ PDFJAM_6UP = --no-landscape
 %-3up.pdf: %_Handout.pdf
 	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
 
-## extract R syntax using knitr::purl ## declared above
-%-syntax.R: %.Rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
-%-syntax.R: %.rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
-
 ## ---------------------------------------------------------------
 ## house-keeping/cleaning ----------------------------------------
 ## ---------------------------------------------------------------
@@ -666,15 +702,15 @@ backup:
 ## Other statistical software and perl/python --------------------
 ## ---------------------------------------------------------------
 
-## SAS STATA PSPP python perl rules ------------------------------
+## SAS Stata PSPP python perl rules ------------------------------
 
 .PHONY: help-stats-others
 help-stats-others:
 	@echo ""
-	@echo Other software: SAS, STATA, PSPP, perl, python
+	@echo Other software: SAS, Stata, PSPP, perl, python
 	@echo ""
 	@echo "SAS:    make myFile.lst     from myFile.sas"
-	@echo "STATA:  make myFile.log     from myFile.do"
+	@echo "Stata:  make myFile.log     from myFile.do"
 	@echo "PSPP:   make myFile.list    from myFile.sps"
 	@echo "        make myFile.pdf     from myFile.sps"
 	@echo "        make myFile.odt     from myFile.sps"
@@ -737,14 +773,14 @@ PSPP_OPTS =
 %.odt: %.sps ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
 %.ODT: %.SPS ; ${PSPP} ${PSPP_OPTS}  -o $@ $<
 
-## STATA ---------------------------------------------------
+## Stata ---------------------------------------------------
 ## I only have access to networked versions
 ##
-## Networked Windows stata
+## Networked Windows Stata
 ## STATA=S:/ITS-NetLicSoftware/SPH-STATA12/Stata14/StataSE-64.exe
 ## STATA_OPTS=/e do 
 ## STATA_OPTS=/b do 
-## Networked Mac OSX stata
+## Networked macOS stata
 ## STATA=smb://nas02.storage.uq.edu.au/HBS-MBS-Shared/ITS-NetLicSoftware/SPH-STATA12/osx/StataSE
 STATA=stata
 STATA_OPTS=-e do 
@@ -766,33 +802,105 @@ SAS_OPTS=
 %.LST: %.SAS ; ${SAS} ${SAS_OPTS} $< ${SAS_CFG}
 
 ## ---------------------------------------------------------------
-## Sweave from cammnd line
+## knitr from command line for .Rnw files
+## ---------------------------------------------------------------
+
+## knitr and purl rules --------------------------------------
+
+
+.PHONY: help-knitr
+help-knitr:
+	@echo ""
+	@echo knitr and purl for .Rnw (.rnw) files
+	@echo ""
+	@echo To knitr or knitr a .Rnw file using knitr by default do not set
+	@echo SWEAVE_ENGINE to Sweave and simply include r-rules with
+	@echo ""
+	@echo "include ~/lib/r-rules.mk"
+	@echo ""
+	@echo "make myFile.pdf          # .pdf using knitr from myFile.Rnw"
+	@echo "make myFile.tex          # .tex using knitr from myFile.Rnw"
+	@echo "make myFile-syntax.R     # purl myFile.Rnw to get R syntax"
+	@echo ""
+	@echo NB: Assumes all .Rnw files are in knitr format
+	@echo "    See r-rules.mk on how to edit r-rules.mk to set Sweave as default"
+	@echo "    For help on running Sweave on all .Rnw files run"
+	@echo "       make help-sweave"
+	@echo "    and"
+	@echo "       help-both-sweave-knitr"
+	@echo "    for help on processing knitr and Sweave format .Rnw files"
+
+## Not sure if this conflicts  ----- START
+
+## perhaps alternative way ifndef but blank SWEAVE_ENGINE works too
+##ifndef SWEAVE_ENGINE
+## uncomment SWEAVE_ENGINE next line if you want to make Sweave default
+## ifeq ($(SWEAVE_ENGINE), knitr)
+
+## tex file from .Rnw - obsolete as now use rmarkdown=knit and pandoc
+%.tex: %.Rnw
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.Rnw}')"
+%.tex: %.rnw
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit('${@:.tex=.rnw}')"
+
+## Not sure if this conflicts
+##%.pdf : %.tex
+##	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $<
+##	${R} CMD ${LATEXMK} ${LATEXMK_FLAGS} $<
+
+## best to go to .pdf directly rather than creating .tex file
+## I am relying on the %.tex: %.Rnw being overriden but problematic if .tex file
+## hanging around due to crash - perhaps remove %.tex: %.[Rr]nw rules
+%.pdf: %.Rnw
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
+%.pdf: %.rnw
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.rnw}')"
+
+## extract R syntax using knitr::purl ## declared above
+%-syntax.R: %.Rnw
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+%-syntax.R: %.rnw
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+## uncomment endif if you want to make Sweave default
+##endif
+
+## Not sure if this conflicts  ----- END
+
+
+## ---------------------------------------------------------------
+## Sweave from command line for .Rnw files
 ## ---------------------------------------------------------------
 
 ## Sweave and Stangle rules --------------------------------------
-##    and how to choose between knitr/Sweave
 
 .PHONY: help-sweave
 help-sweave:
 	@echo ""
-	@echo Sweave and Stangle
+	@echo Sweave and Stangle for .Rnw (.rnw, .Snw, .snw) files
 	@echo ""
 	@echo To sweave or tangle a file using Sweave, you first need to set the
-	@echo "    SWEAVE_ENGINE variable to Sweave (which by default is knitr) with"
+	@echo "SWEAVE_ENGINE variable to Sweave (which by default is knitr)"
+	@echo "with the following:"
 	@echo ""
 	@echo "## note SWEAVE_ENGINE needs to be set before include"
 	@echo "SWEAVE_ENGINE=Sweave"
 	@echo "include ~/lib/r-rules.mk"
 	@echo ""
-	@echo "make myFile.pdf          # Sweave from myFile.Rnw"
-	@echo "make myFile.R            # Stangle from myFile.Rnw"
+	@echo "make myFile.pdf          # .pdf using Sweave from myFile.Rnw"
+	@echo "make myFile.tex          # .tex using Sweave from myFile.Rnw"
+	@echo "make myFile-syntax.R     # Stangle myFile.Rnw to get R syntax"
 	@echo ""
-	@echo NB: Currently all .Rnw files in directory must be in either
-	@echo "    knitr or Sweave format but a better solution is being investigated"
+	@echo NB: Only set SWEAVE_ENGINE if all .Rnw files are in Sweave format
+	@echo "    See r-rules.mk on how to edit r-rules.mk to set Sweave as default"
+	@echo "    For help on running knitr on .Rnw files run"
+	@echo "       make help-knitr"
+	@echo "    and"
+	@echo "       help-both-sweave-knitr"
+	@echo "    for help on processing knitr and Sweave format .Rnw files"
 
 ## from above!!
-## RWEAVE    = $(R) CMD Sweave
-## RWEAVE_FLAGS =
+## RSWEAVE    = $(R) CMD Sweave
+## RSWEAVE_FLAGS =
 ##%.R: %.Rnw
 ##	${R} CMD Stangle $<
 
@@ -801,11 +909,162 @@ help-sweave:
 
 ## may need to lowercase Sweave for windows etc users
 
+## SWEAVE_ENGINE is Sweave ---------------------------------------------
+
+## Alternative definition using latexmk and producing intermediate .tex 
+##%.pdf: %.Rnw
+##	${RSWEAVE} $< ${RSWEAVE_FLAGS}
+##	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $*
+##	${RM} ${RM_OPTS} $*.tex
+
 ifeq ($(SWEAVE_ENGINE), Sweave)
+## produce pdf from .Rnw etc
 %.pdf: %.Rnw
-	${RWEAVE} $< ${RWEAVE_FLAGS}
-	${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} $*
-	${RM} ${RM_OPTS} $*.tex
-%.R: %.Rnw
-	${R} CMD Stangle $<
+	${RSWEAVE} --pdf $< ${RSWEAVE_FLAGS}
+%.pdf: %.rnw
+	${RSWEAVE} --pdf $< ${RSWEAVE_FLAGS}
+%.pdf: %.Snw
+	${RSWEAVE} --pdf $< ${RSWEAVE_FLAGS}
+%.pdf: %.snw
+	${RSWEAVE} --pdf $< ${RSWEAVE_FLAGS}
+## produce tex from .Rnw etc
+%.tex: %.Rnw
+	${RSWEAVE} $< ${RSWEAVE_FLAGS}
+%.tex: %.rnw
+	${RSWEAVE} $< ${RSWEAVE_FLAGS}
+%.tex: %.Snw
+	${RSWEAVE} $< ${RSWEAVE_FLAGS}
+%.tex: %.snw
+	${RSWEAVE} $< ${RSWEAVE_FLAGS}
+## produce R syntax from .Rnw etc
+%-syntax.R: %.Rnw
+	${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.Rnw=.R} $@
+%-syntax.R: %.rnw
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.rnw=.R} $@
+%-syntax.r: %.Snw
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.Snw=.R} $@
+%-syntax.r: %.snw
+	echo ${RSTANGLE} $< ${RSTANGLE_FLAGS}
+	${MV} ${MV_OPTS} ${<:.snw=.R} $@
 endif
+
+## help pdf from both Sweave and knitr in same Makefile ----------------------
+
+.PHONY: help-both-sweave-knitr
+help-both-sweave-knitr:
+	@echo ""
+	@echo Sweave/Stangle and knitr/purl
+	@echo ""
+	@echo "If you have a mixture of knitr and Sweave format .Rnw's then use the following:"
+	@echo ""
+	@echo "Leave SWEAVE_ENGINE unset and specify the following targets"
+	@echo "and also specify dependencies (no predefined target/dependency)"
+	@echo ""
+	@echo "SWEAVE_PDF:  list of pdf files for processing .Rnw with Sweave"
+	@echo "KNITR_PDF:   list of pdf files from .Rnw with knitr"
+	@echo "KNITR_HTML:  list of html files from .Rnw with knitr"
+	@echo "SWEAVE_R: list of -syntax.R files from .Rnw using Stangle"
+	@echo "KNITR_R:  list of -syntax.R files from .Rnw using knitr purl"
+	@echo ""
+	@echo "## Example: files myknitr.Rnw and mySweave.Rnw in appropriate format"
+	@echo "SWEAVE_PDF: myknitr.pdf"
+	@echo "KNITR_PDF: mySweave.pdf"
+	@echo ""
+	@echo "myknitr.pdf: myknitr.Rnw myData1.csv"
+	@echo "mySweave.pdf: mySweave.Rnw myData2.csv"
+	@echo ""
+	@echo "NB: 1) Not only do SWEAVE_PDF, KNITR_PDF etc need to be defined but also"
+	@echo "       dependencies need to be defined explicitly with first dependency"
+	@echo "       as .Rnw or .rnw file , etc"
+	@echo "    2) set RWSEAVE_CLEAN=no  to not remove intermediate Sweave files"
+	@echo "       (Default: yes)"
+	@echo "    3) For help on processing just knitr or sweave .Rnw files see"
+	@echo "       make help-knitr"
+	@echo "       make help-sweave"
+
+## pdf from both Sweave and knitr in same Makefile ----------------------
+
+## use Hooking functions from Mecklenburg pp106-108
+
+## .pdf from .Rnw - Sweave and knitr ------------------------------------
+
+## to clean up R Sweave as (nearly) happens with knitr except FILE.tex
+
+define _clean_up
+	$(MV) $@ ZZZZ_TTMMPP
+	$(RSWEAVE) $(RSWEAVE_CLEAN_FLAGS) $<
+	$(RM) $(RM_OPTS) $(basename $<).tex $(basename $<).aux $(basename $<).log
+	$(MV) ZZZZ_TTMMPP $@
+endef
+
+define _no_clean_up
+	@echo R Sweave intermediate files not removed
+endef
+
+define build-sweave
+	$(call build-sweave-hook,$@)
+endef
+
+ifeq ($(RSWEAVE_CLEAN), yes)
+_do_clean_up = $(_clean_up)
+else
+_do_clean_up = $(_no_clean_up)
+endif
+
+define RSWEAVEPDF
+	${RSWEAVE} --pdf $< ${RSWEAVE_FLAGS}
+	$(_do_clean_up)
+endef
+
+## now define function hooks
+
+## older suggestion from stack-overflow - obsolete? use sweave manual 23/4/2018
+##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} ${<:.Rnw=}
+##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} --pdf ${<:.Rnw=}
+##	${LATEXMK} ${LATEXMK_CLEAN} ${<:.Rnw=.tex}
+
+
+define RKNITRPDF
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('$<')"
+endef
+
+## RSWEAVE_RNW target(s) for .pdf from .Rnw using Sweave
+$(RSWEAVE_PDF): build-sweave-hook = $(RSWEAVEPDF) $1
+$(RSWEAVE_PDF):
+	$(call build-sweave,$^)
+
+## RKNITR_PDF target(s) for .pdf from .Rnw using knitr
+$(RKNITR_PDF): build-sweave-hook = $(RKNITRPDF) $1
+$(RKNITR_PDF):
+	$(call build-sweave,$^)
+
+
+## .R from .Rnw - Sweave and knitr ------------------------------------
+
+## converted to hook style function for both Stangle and purl
+
+define build-rsyntax
+	$(call build-rsyntax-hook,$@)
+endef
+
+## was 	${RSTANGLE} $< # ${RSTANGLE_FLAGS}
+define RSTANGLE_R
+	${RSTANGLE} $<
+endef
+
+define RPURL
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+endef
+
+## RSWEAVE_R target(s) for -syntax.R from .Rnw using Sweave
+$(RSWEAVE_R): build-rsyntax-hook = $(RSTANGLE_R) $1
+$(RSWEAVE_R):
+	$(call build-rsyntax,$^)
+
+## RKNITR_R target(s) for -syntax.R from .Rnw using knitr
+$(RKNITR_R): build-rsyntax-hook = $(RPURL) $1
+$(RKNITR_R):
+	$(call build-rsyntax,$^)

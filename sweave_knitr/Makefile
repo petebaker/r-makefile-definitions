@@ -10,21 +10,38 @@
 RKNITR_PDF=knitr-minimal.pdf 002-minimal.pdf
 RSWEAVE_PDF=foo.pdf exampleSweave.pdf
 
+RKNITR_R=knitr-minimal-syntax.R 002-minimal-syntax.R
+RSWEAVE_R=foo-syntax.R exampleSweave-syntax.R
+
 ## to do - .R outputs !!
 
 .PHONY: all
-all: foo.pdf exampleSweave.pdf knitr-minimal.pdf 002-minimal.pdf
+all: ${RSWEAVE_PDF} ${RKNITR_PDF} ${RSWEAVE_R} ${RKNITR_R} 
 
-## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
-##            *sweave* foo.Rnw, exampleSweave.Rnw
+## for testing
+## all: ${RSWEAVE_PDF} ${RKNITR_PDF} 
+## all: ${RSWEAVE_R} ${RKNITR_R} 
+## all: ${RKNITR_PDF}
+## all: ${RSWEAVE_PDF}
+## all: ${RKNITR_R}
+## all: ${RSWEAVE_R}
+
+## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.rnw and 
+##            *sweave* foo.Rnw, exampleSweave.rnw
 ##            See files for details/URL
 
-## explicit pdf but not necessary unless more dependencies
+## explicit .pdf and -syntax.R target:dependencies definition
+## necessary if mixture of both sweave/knitr formats present
 foo.pdf: foo.Rnw
-exampleSweave.pdf: exampleSweave.Rnw
+foo-syntax.R: foo.Rnw
+exampleSweave.pdf: exampleSweave.rnw
+exampleSweave-syntax.R: exampleSweave.rnw
 knitr-minimal.pdf: knitr-minimal.Rnw
-002-minimal.pdf: 002-minimal.Rnw
+knitr-minimal-syntax.R: knitr-minimal.Rnw
+002-minimal.pdf: 002-minimal.rnw
+002-minimal-syntax.R: 002-minimal.rnw
 
+##RSWEAVE_CLEAN = no
 include r-rules.mk
 
 .PHONY: clean-all
@@ -33,9 +50,11 @@ clean-all:
 
 ## cleaning latex files up ------------------------------------------;
 
-## NB: to clean up Sweave/latex auxillary files you need to use the -f
+## NB: to clean up Sweave/latex auxillary files you may need to use the -f
 ## option to force clean since .tex file removed - need to use ifdef
-## on that too (might need for debugging) so use
+## on that too (might need for debugging) so could use
 
+## R CMD Sweave --clean exampleSweave.rnw
+## or something like
 ## latexmk -c -f exampleSweave
 ## latexmk -c -f foo

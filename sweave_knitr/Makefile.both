@@ -1,86 +1,46 @@
-## Typical rules for use with R
+## Typical rules for use with R - both knitr and sweave format .Rnw files 
 ## 
 ##   - take a copy and modify as necessary
 ##   - ideally put modified copy in a directory you access often or write
 ##     a script to grab a copy whenever you need
 
-## include gmsl # standard library
+## include gmsl # standard library if you wish to program Make more easily
 
 ## pdf outputs
-KNITR_PDF=knitr-minimal.pdf 002-minimal.pdf
-SWEAVE_PDF=foo.pdf exampleSweave.pdf
-##knitr_pdf=knitr-minimal.pdf
-##sweave_pdf=foo.pdf
-## pdf inputs
-##knitr_rnw=knitr-minimal.Rnw 002-minimal.Rnw
-##sweave_rnw=foo.Rnw exampleSweave.Rnw
-##knitr_rnw=knitr-minimal.Rnw
-##sweave_rnw=foo.Rnw
+RKNITR_PDF=knitr-minimal.pdf 002-minimal.pdf
+RSWEAVE_PDF=foo.pdf exampleSweave.pdf
+
+RKNITR_R=knitr-minimal-syntax.R 002-minimal-syntax.R
+RSWEAVE_R=foo-syntax.R exampleSweave-syntax.R
+
+## to do - .R outputs !!
 
 .PHONY: all
-## all: foo.pdf  knitr-minimal.pdf
-all: foo.pdf exampleSweave.pdf knitr-minimal.pdf 002-minimal.pdf
-## all: $(knitr_pdf) $(sweave_pdf)
+all: ${RSWEAVE_PDF} ${RKNITR_PDF} ${RSWEAVE_R} ${RKNITR_R} 
 
-## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.Rnw and 
-##            *sweave* foo.Rnw, exampleSweave.Rnw
+## for testing
+## all: ${RSWEAVE_PDF} ${RKNITR_PDF} 
+## all: ${RSWEAVE_R} ${RKNITR_R} 
+## all: ${RKNITR_PDF}
+## all: ${RSWEAVE_PDF}
+## all: ${RKNITR_R}
+## all: ${RSWEAVE_R}
+
+## Downloaded: *knitr* knitr-minimal.Rnw, 002-minimal.rnw and 
+##            *sweave* foo.Rnw, exampleSweave.rnw
 ##            See files for details/URL
 
-##.PHONY: sw
-##sw: foo.pdf exampleSweave.pdf
-
-##.PHONY: kn
-##kn: knitr-minimal.pdf 002-minimal.pdf
-
-: foo.pdf exampleSweave.pdf
-
-
-## explicit pdf
+## explicit pdf necessary if mixture of sweave/knitr formats present
 foo.pdf: foo.Rnw
-exampleSweave.pdf: exampleSweave.Rnw
+foo-syntax.R: foo.Rnw
+exampleSweave.pdf: exampleSweave.rnw
+exampleSweave-syntax.R: exampleSweave.rnw
 knitr-minimal.pdf: knitr-minimal.Rnw
-002-minimal.pdf: 002-minimal.Rnw
+knitr-minimal-syntax.R: knitr-minimal.Rnw
+002-minimal.pdf: 002-minimal.rnw
+002-minimal-syntax.R: 002-minimal.rnw
 
-## use Hooking functions from Mecklenburg pp106-108
-
-## LATEXMK_CLEAN=-c# moved to r-rules.mk
-
-## include r-rules.mk
-
-##ifndef SWEAVE_ENGINE
-# define build-sweave
-# 	$(call build-sweave-hook,$@)
-# endef
-
-# define rsweavepdf
-# 	${RWEAVE} --pdf $< ${RWEAVE_FLAGS}
-# ##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} ${LATEXMK_OPTS} ${<:.Rnw=}
-# ##	${R} CMD ${LATEXMK_PRE} ${LATEXMK} --pdf ${<:.Rnw=}
-# ##	${LATEXMK} ${LATEXMK_CLEAN} ${<:.Rnw=.tex}
-# 	${RWEAVE} --clean  $<
-# 	${RM} ${RM_OPTS} ${<:.Rnw=.tex} ${<:.Rnw=.aux} ${<:.Rnw=.log}
-# endef
-
-# define rknitrpdf
-# 	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(knitr);knit2pdf('${@:.pdf=.Rnw}')"
-# endef
-
-# ## $(sweave_rnw)
-# $(sweave_pdf): build-sweave-hook = $(rsweavepdf) ##$1
-# ##$(sweave_pdf): foo.Rnw
-# ##	$(call build-sweave,$^)
-
-# ## $(sweave_pdf)
-# $(knitr_pdf): build-sweave-hook = $(rknitrpdf) ##$1
-# ##$(knitr_pdf): knitr-minimal.Rnw
-# %.pdf: %.Rnw  
-# 	$(call build-sweave,$^)
-# ##endif
-
-# .PHONY: pdfs
-# pdfs: $(sweave_pdf) $(knitr_pdf)
-# 	$(call build-sweave, $(sweave_rnw) $(knitr_rnw))
-
+##RSWEAVE_CLEAN = no
 include r-rules.mk
 
 .PHONY: clean-all
@@ -91,18 +51,9 @@ clean-all:
 
 ## NB: to clean up Sweave/latex auxillary files you need to use the -f
 ## option to force clean since .tex file removed - need to use ifdef
-## on that too (might need for debugging) so use
+## on that too (might need for debugging) so could use
 
+## R CMD Sweave --clean exampleSweave.rnw
+## or something like
 ## latexmk -c -f exampleSweave
 ## latexmk -c -f foo
-
-
-## global SWEAVE_ENGINE ----------------------------------------
-
-## first global attempt is now in r-rules.mk 2018-08-04 at 14:41:26
-
-## need a better way to define sweave versus knitr and programmatically too
-## set SWEAVE_ENGINE before calling file else doesn't work
-## could place at top of file if ALWAYS use it but not otherwise
-## SWEAVE_ENGINE=Sweave
-## include r-rules.mk
