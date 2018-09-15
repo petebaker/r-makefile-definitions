@@ -1,0 +1,21 @@
+MAKE=/usr/bin/make
+
+.PHONY: all
+all: minimal-1.html minimal-2.html minimal-3.html
+
+include ~/lib/r-rules.mk
+
+## what if we just use a new rule
+## good idea to add flexibility so add in extras!!
+
+## define different rules for different output files ------------
+
+minimal-1.html: minimal.Rmd
+	${MAKE} -e RMARKDOWN_HTML_EXTRAS=", output_file='minimal-1.html'" minimal.html
+
+minimal-2.html: minimal.Rmd
+	${MAKE} -e RMARKDOWN_HTML_EXTRAS=", params=list(VALUE_1='aa'), output_file='minimal-2.html'" minimal.html
+
+minimal-3.html: minimal.Rmd
+	${MAKE} -e RMARKDOWN_HTML_EXTRAS=", params=list(VALUE_2='bb'), output_file='minimal-3.html'" minimal.html
+

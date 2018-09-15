@@ -1,0 +1,11 @@
+---
+title: MAKE Params
+params:
+  VALUE_1: a
+  VALUE_2: b
+---
+
+```{r code}
+print(params$VALUE_1)
+print(params$VALUE_2)
+```

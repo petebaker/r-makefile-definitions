@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9013
+## Version: 0.2.9014
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -115,29 +115,22 @@
 ##              along with help-sweave and help-knitr etc targets
 ##         Friday September 14 2018-09-14 at 00:16:55 - Version 0.2.9013
 ##           1) Added R syntax targets for mixture of Sweave or knitr
-##           
-
-## EXTRA 1) proper documentation started 2015-02-21 at 23:41:44 - ongoing
-##       2) make knit more system independent
-##          PARTIALLY DONE 2015-03-29 at 09:37:41
-##          DONE 2016-06-19 at 18:45:02
-##       3) generic clean/backup needs work (see just before multiple targets)
-##          but not high priority
-##       4) 2018-09-14 at 00:37:31  extra parameter variables for calling
-##          knitr as requested by bowerth on github.  Trouble is that he
-##          closed issue and I have discussion/details and
-##          I didn't have time to investigate back then
-##          Now I think this is better handled by target specific
-##          variables  eg.
-## should change r-rules.mk definition to something like this
-## %.pdf: %.Rmd
-##	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRA})"
-## RMARKDOWN_PDF_EXTRA =
-## and in Makefile use something like
-## special1.pdf: RMARKDOWN_PDF_EXTRA += ", params = list(value_1 = \"a\", value_2 = \"b\")"
-## special1.pdf: special1.Rmd
-## special2.pdf: RMARKDOWN_PDF_EXTRA += ", params = list(value_1 = \"C2\", value_2 = \"D2\")"
-## special2.pdf: special2.Rmd
+##         Saturday September 15 2018-09-15 at 23:40:32 - Version 0.2.9013
+##           1) Added RMARKDOWN_type_EXTRAS and extended RMARKDOWN_type_OPTS
+##              if not already defined to add flexibility and also
+##              tested examples
+##           2) added ## powerpoint presentation rules   %.pptx: %.Rmd
+## NB to add parameters can use something like
+## minimal.html: RMARKDOWN_HTML_EXTRAS =, params=list(VALUE_1='aa')
+## minimal.html: minimal.Rmd
+## This still does not entirely address question psed by bowerth on github
+## but that is because pattern rules do not easily allow for multiple targets
+## This can be handled with
+## create intermediate .Rmd if necessary
+## minimal-1.Rmd minimal-2.Rmd minimal-3.Rmd: minimal.Rmd
+## 	cp $< $@
+## minimal-1.html: RMARKDOWN_HTML_EXTRAS =, params=list(VALUE_2='bb')
+## minimal-1.html: minimal.Rmd
 ## 
 ## See page 50/51 Mecklenberg 3rd ed.
 ## Section:  Target- and Pattern-Specific Variables
@@ -147,7 +140,15 @@
 ## target...: variable += value
 ## target...: variable ?= value
 ## Pattern-specific variables are similar, only they are specified in a
-##  pattern rule (see page 21) but thats for RMARKDOWN_PDF_EXTRA
+##  pattern rule (see page 21) but thats for RMARKDOWN_PDF_EXTRAS in
+## pattern rule itself
+
+## EXTRA 1) proper documentation started 2015-02-21 at 23:41:44 - ongoing
+##       2) make knit more system independent
+##          PARTIALLY DONE 2015-03-29 at 09:37:41
+##          DONE 2016-06-19 at 18:45:02
+##       3) generic clean/backup needs work (see just before multiple targets)
+##          but not high priority
 
 ## For .Rnw files I've changed the default to knit as that's what I
 ## usually want but to use Sweave then set SWEAVE_ENGINE to Sweave or
@@ -282,25 +283,50 @@ help-r:
 ## I find that rmarkdown seems to be a better option than knitr  
 ## both on CRAN now so easy to install
 
-## RMARKDOWN_PDF_OPTS = (fig_crop=FALSE, fig_caption = TRUE) # default fig_capt
+## RMARKDOWN_xxxx_OPTS = (fig_crop=FALSE, fig_caption = TRUE) # default fig_capt
 RMARKDOWN_PDF_OPTS = (fig_crop=FALSE)
 RMARKDOWN_HTML_OPTS = ()
 RMARKDOWN_DOCX_OPTS = ()
 RMARKDOWN_ODT_OPTS = ()
 RMARKDOWN_RTF_OPTS = ()
+RMARKDOWN_IOSLIDES_OPTS = ()
+RMARKDOWN_SLIDY_OPTS = ()
+RMARKDOWN_BEAMER_OPTS = ()
+RMARKDOWN_TUFTE_OPTS = ()
+RMARKDOWN_PPTX_OPTS = ()
+
+## RMARKDOWN_xxxx_EXTARS to add extra params for customising
+RMARKDOWN_PDF_EXTRAS =
+RMARKDOWN_HTML_EXTRAS =
+RMARKDOWN_DOCX_EXTRAS =
+RMARKDOWN_ODT_EXTRAS =
+RMARKDOWN_RTF_EXTRAS =
+RMARKDOWN_IOSLIDES_EXTRAS =
+RMARKDOWN_SLIDY_EXTRAS =
+RMARKDOWN_BEAMER_EXTRAS =
+RMARKDOWN_TUFTE_EXTRAS =
+RMARKDOWN_PPTX_EXTRAS =
 
 .PHONY: help-stitch
 help-stitch:
-	@echo To stitch file \(like RStudio\) from a .R file, just do one of the following:
+	@echo  
+	@echo To stitch a .R file to obtain a R Notebook \(like RStudio\)
+	@echo  
+	@echo eg. to produce a notebook from myFile.R, use one of the following:
 	@echo make myFile.pdf
 	@echo make myFile.docx
 	@echo make myFile.html
 	@echo make myFile.odt
 	@echo make myFile.rtf
 	@echo " "
-	@echo Variables: RMARKDOWN_PDF_OPTS has default \(fig_crop=FALSE\)
+	@echo Variables:  RMARKDOWN_xxxx_OPTS for specifying rendering options
+	@echo "           RMARKDOWN_PDF_OPTS has default (fig_crop=FALSE)"
 	@echo "           RMARKDOWN_HTML_OPTS, RMARKDOWN_DOCX_OPTS, RMARKDOWN_ODT_OPTS,"
 	@echo "           RMARKDOWN_RTF_OPTS have default ()"
+	@echo " "
+	@echo " Similarly, RMARKDOWN_xxxx_EXTRAS for specifying extra arguments"
+	@echo "            to R Markdown render function  eg."
+	@echo "            RMARKDOWN_HTML_EXTRAS=, params=list(VALUE_1='AA2')"
 	@echo " "
 	@echo NB: This assumes you don\'t have files like myFile.\{Rmd,Rnw,tex\} etc present,
 	@echo "    only 'myFile.R' So good practice is to use different"
@@ -308,29 +334,29 @@ help-stitch:
 
 ## pdf output
 %.pdf: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.R}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRAS})"
 %.pdf: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.r}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRAS})"
 ## html output
 %.html: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", html_document${RMARKDOWN_HTML_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.R}\", html_document${RMARKDOWN_HTML_OPTS} ${RMARKDOWN_HTML_EXTRAS})"
 %.html: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", html_document${RMARKDOWN_HTML_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.r}\", html_document${RMARKDOWN_HTML_OPTS} ${RMARKDOWN_HTML_EXTRAS})"
 ## word doc output
 %.docx: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", word_document${RMARKDOWN_DOCX_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.R}\", word_document${RMARKDOWN_DOCX_OPTS} ${RMARKDOWN_DOCX_EXTRAS})"
 %.docx: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", word_document${RMARKDOWN_DOCX_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.r}\", word_document${RMARKDOWN_DOCX_OPTS} ${RMARKDOWN_DOCX_EXTRAS})"
 ## open (libre) office output
 %.odt: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.R}\", odt_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.R}\", odt_document${RMARKDOWN_ODT_OPTS} ${RMARKDOWN_ODT_EXTRAS})"
 %.odt: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.r}\", odt_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.r}\", odt_document${RMARKDOWN_ODT_OPTS} ${RMARKDOWN_ODT_EXTRAS})"
 ## rich text rtf output
 %.rtf: %.R
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.R}\", rtf_document${RMARKDOWN_RTF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.R}\", rtf_document${RMARKDOWN_RTF_OPTS} ${RMARKDOWN_RTF_EXTRAS})"
 %.rtf: %.r
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.r}\", rtf_document${RMARKDOWN_RTF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.r}\", rtf_document${RMARKDOWN_RTF_OPTS} ${RMARKDOWN_RTF_EXTRAS})"
 
 
 ## knit and rmarkdown pattern rules ----------------------------------
@@ -385,6 +411,7 @@ help-rmarkdown:
 	@echo "    .pdf (via latex)"
 	@echo "    .html"
 	@echo "    .docx (Microsoft Word)"
+	@echo "    .pptx (Microsoft Powerpoint)"
 	@echo "    .odt (open/libre office document)"
 	@echo "    .rtf (rich text format)"
 	@echo "    BASENAME_ioslides.html from BASENAME.Rmd eg $$ make myFile_ioslides.html"
@@ -402,14 +429,15 @@ help-rmarkdown:
 	@echo "    produces all formats defined in YAML header for 'myfile.Rmd'"
 	@echo ""
 	@echo "   Finally, BASENAME-syntax.R: produces R syntax file tangled from Rnw using knit"
-	@echo "   Type 'make help-stitch' for details of variables"
-
+	@echo "   Type 'make help-stitch' for details of customisation variables like"
+	@echo "     RMARKDOWN_xxxx_OPTS and RMARKDOWN_xxxx_EXTRAS where"
+	@echo "     xxxx is PDF, HTML, DOCX, ODT, RTF, IOSLIDES, SLIDY, BEAMER, TUFTE, PPTX"
 
 ## .pdf from .Rmd (via latex)
 %.pdf: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRAS})"
 %.pdf: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.rmd}\", pdf_document${RMARKDOWN_PDF_OPTS} ${RMARKDOWN_PDF_EXTRAS})"
 ## uncomment next line if required for debugging latex although could also use
 ##                clean = FALSE in RMARKDOWN_PDF_OPTS to see .log file
 ## .PRECIOUS: .tex 
@@ -421,51 +449,58 @@ help-rmarkdown:
 
 ## .html from .Rmd
 %.html: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", html_document${RMARKDOWN_HTML_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.Rmd}\", html_document${RMARKDOWN_HTML_OPTS} ${RMARKDOWN_HTML_EXTRAS})"
 %.html: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", html_document${RMARKDOWN_HTML_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.html=.rmd}\", html_document${RMARKDOWN_HTML_OPTS} ${RMARKDOWN_HTML_EXTRAS})"
 
 ## .docx from .Rmd
 %.docx: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", word_document${RMARKDOWN_DOCX_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.Rmd}\", word_document${RMARKDOWN_DOCX_OPTS} ${RMARKDOWN_DOCX_EXTRAS})"
 %.docx: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", word_document${RMARKDOWN_DOCX_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.docx=.rmd}\", word_document${RMARKDOWN_DOCX_OPTS} ${RMARKDOWN_DOCX_EXTRAS})"
 
 ## open office/libre office document format
 %.odt: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", odt_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.Rmd}\", odt_document${RMARKDOWN_ODT_OPTS} ${RMARKDOWN_ODT_EXTRAS})"
 %.odt: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", odt_document${RMARKDOWN_ODT_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.odt=.rmd}\", odt_document${RMARKDOWN_ODT_OPTS} ${RMARKDOWN_ODT_EXTRAS})"
 
 ## rich text format from rmd
 %.rtf: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", rtf_document${RMARKDOWN_RTF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.Rmd}\", rtf_document${RMARKDOWN_RTF_OPTS} ${RMARKDOWN_RTF_EXTRAS})"
 %.rtf: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", rtf_document${RMARKDOWN_RTF_OPTS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.rtf=.rmd}\", rtf_document${RMARKDOWN_RTF_OPTS} ${RMARKDOWN_RTF_EXTRAS})"
 
 ## ioslides presentation
 %_ioslides.html: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.Rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.Rmd}\", ioslides_presentation${RMARKDOWN_IOSLIDES_OPT}, output_file = \"$@\" ${RMARKDOWN_IOSLIDES_EXTRAS})"
 %_ioslides.html: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.rmd}\", \"ioslides_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_ioslides.html=.rmd}\", ioslides_presentation${RMARKDOWN_IOSLIDES_OPT}, output_file = \"$@\" ${RMARKDOWN_IOSLIDES_EXTRAS})"
 
 ## slidy presentation
 %_slidy.html: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.Rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.Rmd}\", slidy_presentation${RMARKDOWN_SLIDY_OPTS}, output_file = \"$@\" ${RMARKDOWN_SLIDY_EXTRAS})"
 %_slidy.html: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.rmd}\", \"slidy_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_slidy.html=.rmd}\", slidy_presentation${RMARKDOWN_SLIDY_OPTS}, output_file = \"$@\" ${RMARKDOWN_SLIDY_EXTRAS})"
 
 ## beamer presentation
 %_beamer.pdf: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.Rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.Rmd}\", beamer_presentation${RMARKDOWN_BEAMER_OPTS}, output_file = \"$@\" ${RMARKDOWN_BEAMER_EXTRAS})"
 %_beamer.pdf: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.rmd}\", \"beamer_presentation\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_beamer.pdf=.rmd}\", beamer_presentation${RMARKDOWN_BEAMER_OPTS}, output_file = \"$@\" ${RMARKDOWN_BEAMER_EXTRAS}))"
 
 ## tufte handout format (NB: first install.packages("tufte", dep=T))
 %_tufte.pdf: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.Rmd}\", \"tufte_handout\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.Rmd}\", tufte_handout${RMARKDOWN_TUFTE_OPTS}, output_file = \"$@\" ${RMARKDOWN_TUFTE_EXTRAS})"
 %_tufte.pdf: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", \"tufte_handout\", output_file = \"$@\")"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:_tufte.pdf=.rmd}\", tufte_handout${RMARKDOWN_TUFTE_OPTS}, output_file = \"$@\" ${RMARKDOWN_TUFTE_EXTRAS})"
+
+## powerpoint presentation
+%.pptx: %.Rmd
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.Rmd}\", powerpoint_presentation${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
+%.pptx: %.rmd
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.rmd}\", powerpoint_presentation${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
+
 
 ## --------------------------------------------------------------------
 ## backup using rsync -------------------------------------------------
