@@ -5,6 +5,9 @@ params:
   VALUE_2: b
 ---
 
+<!-- provided by bowerth as minimal example re target specific variables
+     and alternatives in a question/issue re parameterised reports -->
+
 ```{r code}
 print(params$VALUE_1)
 print(params$VALUE_2)
