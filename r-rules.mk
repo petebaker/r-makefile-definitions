@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9014
+## Version: 0.2.9015
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -142,6 +142,9 @@
 ## Pattern-specific variables are similar, only they are specified in a
 ##  pattern rule (see page 21) but thats for RMARKDOWN_PDF_EXTRAS in
 ## pattern rule itself
+##
+##    Monday 2018-10-29 at 16:48:34  Version: 0.2.9015
+##       1) fixed help-sweave and help-knitr which caused echo errors
 
 ## EXTRA 1) proper documentation started 2015-02-21 at 23:41:44 - ongoing
 ##       2) make knit more system independent
@@ -846,7 +849,7 @@ SAS_OPTS=
 .PHONY: help-knitr
 help-knitr:
 	@echo ""
-	@echo knitr and purl for .Rnw (.rnw) files
+	@echo knitr and purl for .Rnw \(.rnw\) files
 	@echo ""
 	@echo To knitr or knitr a .Rnw file using knitr by default do not set
 	@echo SWEAVE_ENGINE to Sweave and simply include r-rules with
@@ -911,7 +914,7 @@ help-knitr:
 .PHONY: help-sweave
 help-sweave:
 	@echo ""
-	@echo Sweave and Stangle for .Rnw (.rnw, .Snw, .snw) files
+	@echo Sweave and Stangle for .Rnw \(.rnw, .Snw, .snw\) files
 	@echo ""
 	@echo To sweave or tangle a file using Sweave, you first need to set the
 	@echo "SWEAVE_ENGINE variable to Sweave (which by default is knitr)"
