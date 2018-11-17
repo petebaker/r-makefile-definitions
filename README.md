@@ -36,10 +36,11 @@ Using r-rules.mk
 
 1. Download the file to a directory you use for such files. Ideally,
    this would something like:
-   - ~/lib or C:\MyLibrary
+   - <kbd>~/lib</kbd> or <kbd>C:\MyLibrary</kbd> or <kbd>/usr/local/include</kbd>
 2. put the following line in your Makefile
-   - include ~/lib/r-rules.mk where ~ will be expanded to be your HOME directory, or
-   - include C:/MyLibrary/r-rules.mk (in windows)
+   - <kbd>include ~/lib/r-rules.mk</kbd> where ~ will be expanded to be your HOME directory, or
+   - <kbd>include C:/MyLibrary/r-rules.mk</kbd> (in windows), or
+   - <kbd>include r-rules.mk</kbd> if loaction in system directory for Makefile includes 
 
 **Note:** the very simplest way to run make would be to simply create
 a new text file named *Makefile* in your working directory with a
