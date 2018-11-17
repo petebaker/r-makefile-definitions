@@ -151,9 +151,9 @@
 ##          beamer_presentation() so need to use "beamer_presentation" etc
 ##          and note that if need to specify a setting then YAML ignored
 ##          altogether and defaults used for any other parameters not specified
-##          so set RMARKDOWN_BEAMER=\"beamer_presentation\" (default)
+##          so set RMARKDOWN_BEAMER_OPTS=\"beamer_presentation\" (default)
 ##             and users can then reset as required eg
-##                 RMARKDOWN_BEAMER=beamer_presentation(theme = "Frankfurt")
+##                 RMARKDOWN_BEAMER_OPTS=beamer_presentation(theme = "Frankfurt")
 ##         so default reverted to string rather than function call
 ##    NB: RStudio may use render() but compiled differently (or at least hidden)
 ##       2) modified help accordingly
@@ -190,7 +190,7 @@
 
 .PHONY: help
 help:
-	@echo Simple help can be obtained with
+	@echo General help can be obtained with
 	@echo ""
 	@echo make help-r
 	@echo make help-stitch
@@ -201,6 +201,9 @@ help:
 	@echo make help-stats-others
 	@echo make help-beamer
 	@echo make help-rsync
+	@echo ""
+	@echo "NB: GNU Make on macOS or Windows may be very old (Vesion<3.82) and a"
+	@echo "    newer version may be needed for some rules (eg use gmake etc)"
 ## not really useful - much bettter to use RStudio, emacs magit etc
 ##	@echo make help-git
 
@@ -358,7 +361,8 @@ help-stitch:
 	@echo " "
 	@echo "Variables: RMARKDOWN_xxxx_OPTS for specifying rendering options"
 	@echo "           although if changed then YAML header will not be used"
-	@echo "           but instead full object call will be needed"
+	@echo "           but instead full object call is made which means that"
+	@echo "           all parameters set to default values"
 	@echo "   eg default RMARKDOWN_PDF_OPTS is \"pdf_document\" but could"
 	@echo "      be set with RMARKDOWN_PDF_OPTS=pdf_document(fig_crop=FALSE)"
 	@echo "      RMARKDOWN_HTML_OPTS, RMARKDOWN_DOCX_OPTS, RMARKDOWN_ODT_OPTS,"
@@ -546,7 +550,7 @@ help-rmarkdown:
 
 ## produce handout 1 slide per page
 %_beamer-handout.pdf: %_beamer-handout.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", ${RMARKDOWN_BEAMER}, output_file = \"$@\" ${RMARKDOWN_BEAMER_EXTRAS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pdf=.Rmd}\", ${RMARKDOWN_BEAMER_OPTS}, output_file = \"$@\" ${RMARKDOWN_BEAMER_EXTRAS})"
 	rm $<
 
 ## use pdfjam to produce n-up from handout pdf
