@@ -37,10 +37,10 @@ Using r-rules.mk
 1. Download the file to a directory you use for such files. Ideally,
    this would something like:
    - <kbd>~/lib</kbd> or <kbd>C:\MyLibrary</kbd> or <kbd>/usr/local/include</kbd>
-2. put the following line in your Makefile
+2. put the following line in your *Makefile*
    - <kbd>include ~/lib/r-rules.mk</kbd> where ~ will be expanded to be your HOME directory, or
    - <kbd>include C:/MyLibrary/r-rules.mk</kbd> (in windows), or
-   - <kbd>include r-rules.mk</kbd> if loaction in system directory for Makefile includes 
+   - <kbd>include r-rules.mk</kbd> if location in system directory for *Makefile* includes 
 
 **Note:** the very simplest way to run make would be to simply create
 a new text file named *Makefile* in your working directory with a
@@ -52,15 +52,15 @@ typing 'make mySpecialAnalysis.pdf'.
 
 However, you will miss out on the power of make which you can harness by describing the dependencies among files.
 
-To actually use these rules in practice, we may have several prerequisite files like an R syntax file and several data files. In the Makefile we may specify the dependencies as
+To actually use these rules in practice, we may have several prerequisite files like an R syntax file and several data files. In the *Makefile* we may specify the dependencies as
 
 ```make
 readData.Rout: readData.R data1.csv data2.csv oldData.RData
 ```
 
-so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’. Of course, it is better if we set up our Makefile so that 'readData.Rout' gets built automatically and so we can just type 'make'. 
+so we can run the syntax file by typing ‘make readData.Rout’ at the command prompt. If any of the files readData.R, data1.csv, data2.csv or oldData.RData have changed recently, and so are newer than the target file readData.Rout, then the predefined R batch command is run to get a new output file, otherwise readData.Rout is ‘up to date’. Of course, it is better if we set up our *Makefile* so that 'readData.Rout' gets built automatically and so we can just type 'make'. 
 
-To take advantage of *make*, the best approach is to define all necessary targets and dependencies in project Makefile(s).
+To take advantage of *make*, the best approach is to define all necessary targets and dependencies in project *Makefile*(s).
 
 Example Makefiles
 ==============
@@ -103,7 +103,7 @@ to use stitch to create pdf output *newAnalysis.pdf* from the file
 *newAnalysis.R* simply type **make newAnalysis.pdf** at the prompt.
 
 More usually, if there is a sequence of steps relying on a data file
-*myData.csv* your Makefile may look something like
+*myData.csv* your *Makefile* may look something like
 
 ```make
 .PHONY:	all
@@ -144,6 +144,6 @@ Definitions in 'r-rules.mk' have been developed and tested on linux. To a limite
 
 Extra rules for SAS, STATA, PSPP, python and perl are very preliminary and not extensively tested.
 
-Once you have a Makefile which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
+Once you have a *Makefile* which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'. Comprehensive documentation is in preparation.
 
-Finally, there are two bash scripts to help use these R pattern rules. Firstly,  'checkInstalled' checks that the pattern rules, Makefile templates etc in ~/lib or ~/bin are the same and highlights differences using the unix command 'diff'.The 'cpMakeTemplate' bash script can be put in your path to copy a Makefile template to the current directory. Several templates are available. Please see 'cpMakeTemplate -h' and 'checkInstalled -h' for details. The file 'install.txt' gives advice and some commands for installing these files to make them readily available.
+Finally, there are two bash scripts to help use these R pattern rules. Firstly,  'checkInstalled' checks that the pattern rules, *Makefile* templates etc in ~/lib or ~/bin are the same and highlights differences using the unix command 'diff'.The 'cpMakeTemplate' bash script can be put in your path to copy a *Makefile* template to the current directory. Several templates are available. Please see 'cpMakeTemplate -h' and 'checkInstalled -h' for details. The file 'install.txt' gives advice and some commands for installing these files to make them readily available.
