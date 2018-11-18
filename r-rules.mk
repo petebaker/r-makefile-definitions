@@ -374,8 +374,10 @@ help-stitch:
 	@echo "        etc present, only 'myFile.R' So good practice is to use"
 	@echo "        different file (base)names for reports and analysis"
 	@echo "    (2) Note that you can always include a YAML header and markdown in .R"
-	@echo "        syntax file by using comments starting with #' or ##'"
-	@echo See https://github.com/jennybc/happy-git-with-r/blob/master/31_workflow-first-use-r-script-and-github.Rmd
+	@echo "        syntax file by using comments starting with #' or ##' . See"
+	@echo "            http://happygitwithr.com/r-test-drive.html"
+## did have this as the URL but now simpler
+## https://github.com/jennybc/happy-git-with-r/blob/master/31_workflow-first-use-r-script-and-github.Rmd
 
 ## pdf output
 %.pdf: %.R
