@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9016
+## Version: 0.2.9017 (Version 0.3 rc1)
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -160,6 +160,9 @@
 ##       3) added beamer handouts 1 page + 2, 3, 4, 6 up as well
 ##          note that 'awk' is used to find second --- line and then
 ##          classoption: "handout"  line is inserted above for pandoc
+##    Thursday October 22 2018-11-22 at 16:51:21    Version: 0.2.9017
+##       1) Fixed PPT from R Markdown rules
+##       2) Version 0.3 Release Candidate 1
 
 ## EXTRA 1) proper documentation started 2015-02-21 at 23:41:44 - ongoing
 ##       2) make knit more system independent
@@ -362,7 +365,7 @@ help-stitch:
 	@echo "Variables: RMARKDOWN_xxxx_OPTS for specifying rendering options"
 	@echo "           although if changed then YAML header will not be used"
 	@echo "           but instead full object call is made which means that"
-	@echo "           all parameters set to default values"
+	@echo "           all parameters are (re)set to default values and YAML ignored"
 	@echo "   eg default RMARKDOWN_PDF_OPTS is \"pdf_document\" but could"
 	@echo "      be set with RMARKDOWN_PDF_OPTS=pdf_document(fig_crop=FALSE)"
 	@echo "      RMARKDOWN_HTML_OPTS, RMARKDOWN_DOCX_OPTS, RMARKDOWN_ODT_OPTS,"
@@ -576,9 +579,9 @@ help-rmarkdown:
 
 ## powerpoint presentation
 %.pptx: %.Rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.Rmd}\", powerpoint_presentation${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.Rmd}\", ${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
 %.pptx: %.rmd
-	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.rmd}\", powerpoint_presentation${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
+	${RSCRIPT} ${RSCRIPT_OPTS} -e "library(rmarkdown);render(\"${@:.pptx=.rmd}\", ${RMARKDOWN_PPTX_OPTS}, output_file = \"$@\" ${RMARKDOWN_PPTX_EXTRAS})"
 
 
 ## --------------------------------------------------------------------
