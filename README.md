@@ -40,10 +40,10 @@ Using r-rules.mk
 2. put the following line in your *Makefile*
    - <kbd>include ~/lib/r-rules.mk</kbd> where ~ will be expanded to be your HOME directory, or
    - <kbd>include C:/MyLibrary/r-rules.mk</kbd> (in windows), or
-   - <kbd>include r-rules.mk</kbd> if location in system directory for *Makefile* includes 
+   - <kbd>include r-rules.mk</kbd> if location in system directory for *Makefile* includes (eg <kbd>/usr/local/include</kbd>)
 
 **Note:** the very simplest way to run make would be to simply create
-a new text file named *Makefile* in your working directory with a
+a new text file named *Makefile* in your working directory or a system directory like <kbd>/usr/local/include</kbd> with a
 single line above including the file *r-rules.mk*. If you have an R
 syntax file named say mySpecialAnalysis.R then, in a terminal, you can
 run *R* to produce an output file by typing 'make
