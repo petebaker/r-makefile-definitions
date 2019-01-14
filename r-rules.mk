@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9017 (Version 0.3 rc1)
+## Version: 0.2.9018 (Version 0.3 rc2)
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -14,6 +14,9 @@
 ##
 ##   The latest version of this file is available at
 ##   https://github.com/petebaker/r-makefile-definitions
+
+VERSION = 0.2.9018
+VERSION_TAG = "Version 0.3 rc2"
 
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
@@ -193,6 +196,10 @@
 
 .PHONY: help
 help:
+	@echo ""
+	@echo GNU Make rules for Data Analysis and Reporting
+	@echo Version ${VERSION} \(${VERSION_TAG}\)
+	@echo ""
 	@echo General help can be obtained with
 	@echo ""
 	@echo make help-r
@@ -205,8 +212,10 @@ help:
 	@echo make help-beamer
 	@echo make help-rsync
 	@echo ""
-	@echo "NB: GNU Make on macOS or Windows may be very old (Vesion<3.82) and a"
-	@echo "    newer version may be needed for some rules (eg use gmake etc)"
+	@echo "NB: GNU Make on macOS or Windows may be very old (Version<3.82) and a"
+	@echo "    newer version may be needed for some rules. Please consider installing"
+	@echo "    'gmake' from macOS homebrew (brew.sh), or"
+	@echo "    the latest Rtools for Windows (cran.r-project.org/bin/windows/Rtools)"
 ## not really useful - much bettter to use RStudio, emacs magit etc
 ##	@echo make help-git
 
