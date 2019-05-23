@@ -1,10 +1,11 @@
 ## File: Makefile.runR
-## 
 ## What: Template typical rules for R files but adds extension R_OUT_EXT
 ## 
 ##   - take a copy and modify as necessary
 ##   - ideally put modified copy in a directory you access often or write
 ##     a script to grab a copy whenever you need
+##
+## For help, at the prompt type:   make help
 
 ##R_OUT_EXT = Rout
 R_OUT_EXT = pdf

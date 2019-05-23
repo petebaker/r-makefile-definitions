@@ -49,7 +49,7 @@ DESTINATION=Makefile
 usage() { echo "Usage: $0 [-s source dir] [-m|-1|-2|-r] [-d name]"; \
 	  echo " -m standard simple Makefile for using R"; \
 	  echo " -1 copy Makefile for rsync to/from 1 destination" ; \
-	  echo " -2 copy Makefile for rsync to/from 2 destinations" ; \
+	  echo " -2 copy Makefile for rsync to 2 destinations (and from first)" ; \
 	  echo " -r Makefile for using R but changing output extension (Default)" 1>&2; exit 1; }
 
 
@@ -61,7 +61,7 @@ usage() { echo "Usage: $0 [-s source dir] [-m|-1|-2|-r] [-d name]"; \
 ## process command line args - see pp 33-34 Michael (2008)
 
 if [[ $1 == "" ]]; then
-     FILE2COPY=${MAKEF_R}
+0     FILE2COPY=${MAKEF_R}
 else
    #parse options with getopts code block here;
 while getopts :sd:hm12r PARS 2>/dev/null

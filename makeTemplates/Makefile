@@ -1,8 +1,11 @@
-## Typical rules for use with R
+## File: Makefile
+## What: Typical rules for use with R
 ## 
 ##   - take a copy and modify as necessary
 ##   - ideally put modified copy in a directory you access often or write
 ##     a script to grab a copy whenever you need
+##
+## For help, at the prompt type:   make help
 
 .PHONY: all
 all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf

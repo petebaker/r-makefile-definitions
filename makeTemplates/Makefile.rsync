@@ -2,27 +2,30 @@
 ##
 ## What: Makefile template to rsync current directory to specified
 ##       directory with flags
+## Note: directory could be on remote host. See man rsync
+## Log: 2019-05-23 at 12:01:10: changed 'test' to 'test_' etc for bash editing
+##
+## For help, at the prompt type:   make help-rsync
 
 .PHONY: all
-all: testall
+all: test_all
 
-testall: rsynctest
-copyall: rsynccopy
-test2here: rsynctest2here
-copy2here: rsynccopy2here
+test_all: rsynctest
+copy_all: rsynccopy
+test_2here: rsynctest2here
+copy_2here: rsynccopy2here
 
 ## testall: rsynctest rsynctest2
 ## copyall: rsynccopy rsynccopy2
 
 include ~/lib/r-rules.mk
 
-## NB: Customisations should be make after including r-rules.mk
-
+## NB: Customisations should be make after including r-rules.mk, eg
 ## RSYNC_FLAGS = -auvtr --progress
 ## RSYNC_FLAGS_POST = --exclude=.DS_Store --delete
 
-## Cloudstation (also used for retrieval)
-RSYNC_DESTINATION=~/CloudStation/work/project/dataAnalysis3
+## CHANGE NEXT LINE:   Primary Backup (also used for retrieval)
+RSYNC_DESTINATION=~/CloudStation/work/my/project
 
-## ownCloud (secondary backup) not used
+## CHANGE: Secondary backup not used. (See Makefile.rsync2)
 ## RSYNC_DESTINATION2=
