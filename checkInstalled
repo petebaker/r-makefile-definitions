@@ -34,6 +34,8 @@ LIB_DIR=${HOME}/lib
 MK_FILES='r-rules-functions.mk r-rules.mk'
 
 ## Makefile template files for comparison
+BIN_DIR=${HOME}/bin
+BASH_SCRIPTS=cpMakeTemplate
 SRC_TEMPLATES=makeTemplates 
 DEST_TEMPLATES=${LIB_DIR}/${SRC_TEMPLATES}
 TEMPLATES='install.txt Makefile Makefile.rsync Makefile.rsync2 Makefile.runR'
@@ -99,6 +101,9 @@ echo ""
 if [[ $MAKOFF == "1" ]]; then
      echo "Makefile templates not compared."
 else
+    echo Comparing bash script for copying pattern rule files in ${BIN_DIR}:
+    for F in ${BASH_SCRIPTS}; do echo +++ File: $F; diff ${SRC_DIR}/$F ${BIN_DIR}/$F; done
+    echo ""
     echo Comparing Makefile templates in ${DEST_TEMPLATES}:
     for F in ${TEMPLATES}; do echo +++ File: $F; diff ${SRC_TEMPLATES}/$F ${DEST_TEMPLATES}/$F; done
 fi
