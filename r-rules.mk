@@ -15,8 +15,8 @@
 ##   The latest version of this file is available at
 ##   https://github.com/petebaker/r-makefile-definitions
 
-VERSION = 0.2.9018
-VERSION_TAG = "Version 0.3 rc2"
+VERSION = 0.2.9019
+VERSION_TAG = "Version 0.3 rc3"
 
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
@@ -305,6 +305,8 @@ help-r:
 	@echo "            myFile.Rout: myFile.R"
 	@echo ""
 	@echo "    Type 'make help-stitch' for details of other output formats."
+	@echo ""
+	@echo "    For instance, set RMARKDOWN_PDF_OPTS etc to \"\" to use the YAML header"
 ## produce .Rout from .R file --------------------------------------
 
 ## Running R to produce text file output
@@ -385,8 +387,15 @@ help-stitch:
 	@echo "NB: (1) This assumes you don't have files like  myFile.{Rmd,Rnw,tex}"
 	@echo "        etc present, only 'myFile.R' So good practice is to use"
 	@echo "        different file (base)names for reports and analysis"
-	@echo "    (2) Note that you can always include a YAML header and markdown in .R"
-	@echo "        syntax file by using comments starting with #' or ##' . See"
+	@echo "    (2) A PDF, HTML, DOCX etc file is produced automatically by the"
+	@echo "        rules in 'r-rules.mk'. However, this overrides any YAML header. To"
+	@echo "        ensure the YAML header takes precendence then please set the options"
+	@echo "        to be blank with say RMARKDOWN_PDF_OPTS=, or RMARKDOWN_HTML_OPTS= etc."
+	@echo "        Alternatively, set these to \\\"all\\\" to produce all formats"
+	@echo "        specified in YAML header or NULL for the first format."
+	@echo "        A specific target can be specified or set globally (help r-markdown)."
+	@echo "    (3) Note that you can always include a YAML header and markdown in .R"
+	@echo "        syntax file by using roxygen comments starting with #' or ##'. See"
 	@echo "            http://happygitwithr.com/r-test-drive.html"
 ## did have this as the URL but now simpler
 ## https://github.com/jennybc/happy-git-with-r/blob/master/31_workflow-first-use-r-script-and-github.Rmd
@@ -483,14 +492,15 @@ help-rmarkdown:
 	@echo "    or N-up slides with BASENAME_beamer-Nup.pdf where N=2,3,4 or 6"
 	@echo "    BASENAME_tufte.pdf from BASENAME.Rmd (tufte handouts)"
 	@echo ""
-	@echo NB: You can easily set up a .PHONY target in \'Makefile\' to produce all
-	@echo "    output format files specified at the top of the .Rmd file"
-	@echo "    Set up a phony target with something like"
-	@echo "      .PHONY: rmarkdown-all"
-	@echo "      rmarkdown-all: myfile.Rmd"
-	@echo "    then typing the following at the command prompt"
-	@echo '    $$ make rmarkdown-all'
-	@echo "    produces all formats defined in YAML header for 'myfile.Rmd'"
+	@echo NB: You can easily set up a target in \'Makefile\' to produce all
+	@echo "    output format files specified at the top of a specific .Rmd file but to do"
+	@echo "    this requires specifying a pretend target with something like"
+	@echo "      myfile.pdf: RMARKDOWN_PDF_OPTS=\\\"all\\\""
+	@echo "      myfile.pdf: $$"\{@:\$.pdf=.Rmd\}
+	@echo "    to produce all formats defined in YAML header for 'myfile.Rmd'"
+	@echo "    NB: to do this for all .Rmd files simply set the variable"
+	@echo "        RMARKDOWN_PDF_OPTS=\\\"all\\\""
+	@echo "        on a separate line in Makefile"
 	@echo ""
 	@echo "   Finally, 'make BASENAME-syntax.R': produces R syntax file purled"
 	@echo "             from BASENAME.Rmd using knit"
