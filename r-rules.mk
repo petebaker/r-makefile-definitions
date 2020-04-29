@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.2.9018 (Version 0.3 rc2)
+## Version: 0.3 (Version 0.3-1)
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -15,8 +15,8 @@
 ##   The latest version of this file is available at
 ##   https://github.com/petebaker/r-makefile-definitions
 
-VERSION = 0.2.9019
-VERSION_TAG = "Version 0.3 rc3"
+VERSION = 0.3
+VERSION_TAG = "Version 0.3"
 
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
@@ -123,6 +123,17 @@ VERSION_TAG = "Version 0.3 rc3"
 ##              if not already defined to add flexibility and also
 ##              tested examples
 ##           2) added ## powerpoint presentation rules   %.pptx: %.Rmd
+##        2018-10-29 at 16:48:34  Version: 0.2.9015 - see below
+##        2018-11-17 at 17:13:00    Version: 0.2.9016 - see below
+##        2019-09-28                Version: 0.2.9018/9 (Version 0.3 rc1/2)
+##           1) changed help and minor changes to scripts like cpMakeTemplate
+##              and checkInstalled
+##           2) added VERSION, VERSION_TAG variables for help
+##        2020-04-29 at 23:25       Version: 0.3
+##           1) update version to 0.3 for upcoming JSS paper
+##           2) update README.md to fix macOS references
+##        2020-0[45]-?? will add reference to JSS paper once published
+##
 ## NB to add parameters can use something like
 ## minimal.html: RMARKDOWN_HTML_EXTRAS =, params=list(VALUE_1='aa')
 ## minimal.html: minimal.Rmd

@@ -25,7 +25,7 @@ files, *.docx* files from *.Rmd* files and so on.
 The file *r-rules.mk* can be included in a standard *Makefile* to
 facilitate a more efficient workflow.
 
-**NB:** For **MAC-OSX**, make (like many other programs), is pretty
+**NB:** For **macOS**, make (like many other programs), is pretty
 ancient in computing terms. You may prefer to install a recent version
 of *GNU Make*. IMHO, the best way is to install via *homebrew* - see
 http://brew.sh/. Use *gmake* which will run the new version instead of
@@ -135,12 +135,12 @@ Note that *Windows* users can install *Rtools* (available via CRAN) to get a wor
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
 
-*MACOSX* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode*.
+*macOS* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode* so using *gmake* is highly recommended.
 
 Notes
 =======
 
-Definitions in 'r-rules.mk' have been developed and tested on linux. To a limited extent, these rules have also been tested on windows (Rtools) and macosx (homebrew 'gmake' - not macosx Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
+Definitions in 'r-rules.mk' have been developed and tested on linux. These rules have also been reasonably well tested on windows (Rtools) and macOS (homebrew 'gmake' - not macOS Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
 
 Extra rules for SAS, STATA, PSPP, python and perl are very preliminary and not extensively tested.
 
