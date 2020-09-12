@@ -1,9 +1,11 @@
 GNU Make rules for Data Analysis and Reporting
 =============
 
+Note: This branch is to fix a problem that seems to appear after R 4.0 was released but may have been present prior to this. Basically, R Markdown and knit use the construct \" which have been replaced with ' in these definitions. The awk command for Beamer TeX file construction needs checking as I haven't changed that yet.
+
 Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
 
-Comprehensive documentation will soon be available as *Peter Baker (2020) Using GNU Make to Manage the Workflow of Data Analysis Projects, Journal of Statistical Software.*
+Comprehensive documentation is available: *Peter Baker (2020) Using GNU Make to Manage the Workflow of Data Analysis Projects, Journal of Statistical Software.* https://doi.org/10.18637/jss.v094.c01
 
 **GNU Make** is a commonly used tool as part of the process for
   managing software projects.
