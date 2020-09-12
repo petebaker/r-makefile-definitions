@@ -1,7 +1,7 @@
 GNU Make rules for Data Analysis and Reporting
 =============
 
-Note: This branch is to fix a problem that seems to appear after R 4.0 was released but may have been present prior to this. Basically, R Markdown and knit use the construct \" which have been replaced with ' in these definitions. The awk command for Beamer TeX file construction needs checking as I haven't changed that yet.
+Note: This branch is to fix a problem that seems to appear after R 4.0 was released but may have been present prior to this. Basically, R Markdown and knit use the construct \\" which have been replaced with ' in these definitions. The awk command for Beamer TeX file construction needs checking as I haven't changed that yet.
 
 Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
 
