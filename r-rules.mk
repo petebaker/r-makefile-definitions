@@ -1016,9 +1016,9 @@ help-knitr:
 
 ## extract R syntax using knitr::purl ## declared above
 %-syntax.R: %.Rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);purl('$<', out='$@')"
 %-syntax.R: %.rnw
-	${RSCRIPT} ${RSCRIPT_OPTS}  -e 'library(knitr);purl("$<", out="$@")'
+	${RSCRIPT} ${RSCRIPT_OPTS}  -e "library(knitr);purl('$<', out='$@')"
 ## uncomment endif if you want to make Sweave default
 ##endif
 
