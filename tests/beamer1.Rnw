@@ -1,0 +1,154 @@
+
+%% NB: Do not put \documentclass or beamer mode specific commands here
+%%     These should be set in files or in \mode<presentation> etc - see below
+%%     Appropriate documentclass statemnt will be included from
+%%     preabmlePresent.Rnw or alternate file set in Makefile
+
+
+%% modified as must have been an old version of beamer eg titlepage etc
+%% did not work
+
+%% Simple Example: http://cphg.virginia.edu/mackey/2010/03/24/presentations-with-sweavelatexbeamer/%% converted to knitr format with
+%% knitr:::Sweave2knitr("b1.Rnw")
+
+\mode<article>{ % only article mode
+  \usepackage{fullpage}
+  \usepackage[linktocpage]{hyperref} }
+\mode<presentation>{ % only presentation mode
+  %% \setbeamertemplate{background canvas}[vertical shading][bottom=red!10,top=blue!10]
+  %%
+  %% For themes see https://www.hartwork.org/beamer-theme-matrix/
+  %%
+  %% \usetheme{Warsaw} \usefonttheme[onlysmall]{structurebold} 
+  \usetheme{Frankfurt}
+  %% \usetheme{Boadilla}
+  %% \usetheme{Berlin}
+  %% \usetheme{CambridgeUS}
+  %% \usecolortheme{dolphin}
+  \usecolortheme{seahorse}
+  %% \usecolortheme{seagull}
+  %% \usecolortheme{whale}
+  %% \usecolortheme{rose}
+}
+%% \mode<notes>{ % only presentation mode with notes on 2nd screen
+%%   \usepackage{pgfpages}
+%%   \setbeamertemplate{note page}[plain]
+%%   \setbeameroption{show notes on second screen=right}
+%% }
+
+%% pdf can be produced with make
+%% make b1_Present.pdf  etc
+%% or manually with
+%% $ cat preamblePresent.Rnw b1.Rnw > b1_Present.Rnw
+%% library(knit);knit2pdf("b1_Present.Rnw") in R
+%% (or knit("b1_Present.Rnw") then $ R CMD latexmk --pdf b1_Present.tex) etc
+
+\usepackage{booktabs}
+%% \usepackage{natbib}
+\usepackage[os=win]{menukeys}
+\renewmenumacro{\directory}[/]{pathswithfolder}
+\usepackage[normalem]{ulem}
+
+\begin{document}
+
+\begin{frame}[fragile]
+\title{Test of Using the \LaTeX~package Beamer with knitr\\ (was Sweave)}
+\author{Peter Baker\footnotemark} %%[\scriptsize{1}]}
+\footnotetext[1]{based on simple example by Mark J. Lawson}
+\titlepage % create title page
+\end{frame}
+
+\maketitle
+
+\begin{frame}[fragile]
+\frametitle{Outline}
+\tableofcontents
+\end{frame}
+
+\section{R-Code}
+
+% this section will show the intialization code
+
+Does this text show up? Yes in article.
+
+\begin{frame}[fragile]
+\begin{itemize}
+\item point 1\pause
+\item point 2\pause
+%%  \note<1 2>{this will put a note on 2nd screen} perhaps
+\item point 3
+\end{itemize}
+\end{frame}
+
+Now lets put some inital data in (Article comment only since outside
+of frame)
+
+\begin{frame}[fragile]{The R-Code (Intializations)} % title of frame
+
+<<>>=
+# this is R code
+library(ggplot2)
+x <- c(0,1,2,3,4)
+y <- 2 + 5*x + 2*rnorm(length(x))
+summary(y)
+@ 
+
+This is the initialization
+
+\end{frame}
+
+% adjust size of figure
+%\setkeys{Gin}{width=0.6textwidth} % 60% of text width
+
+\section{The Plot}
+
+\begin{frame}[fragile]{The qplot with the given R-Code}
+
+\vspace*{-5mm}
+\begin{center} % make sure the plot is in the center of the page
+
+%% dull-plot,fig.width=3,fig.height=3,out.width='.45\\linewidth'
+<<dull-plot,fig.width=2,fig.height=2>>=
+p <- qplot(x,y)
+print(p)
+@ 
+This is the figure
+
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Linear regression (xtable)}
+<<Table1, results = 'asis'>>=
+library(xtable)
+print(xtable(summary(lm(y~x))$coefficients, digi=2, 
+             caption ="Summary of coeffs."), 
+      caption.placement = "top")
+@
+\end{frame}
+
+\begin{frame}[fragile]{Linear regression (kable)}
+Note the weird column heading. Easier to use \textit{xtable}
+%%  <<Table2, results = 'asis'>>=
+<<Table2, results = 'markup'>>=
+d <- summary(lm(y~x))$coefficients # one attempt to modify row/col
+rownames(d) <- c("$\\beta_0$", "$\\beta_1$")
+colnames(d)[4] <- "$P(T \\gt t)$"
+kable(d, format = "latex", booktabs = TRUE,
+      caption ="Summary of regression coefficients", 
+      digits = 2, escape = TRUE)
+@ 
+\end{frame}
+
+
+%% \begin{frame}[fragile]{Linear regression (pander)}
+%%   Note this fails because it really seems aimed at rmarkdown not rlatex
+%% <<Table3, results = 'markdown'>>=
+%% library(pander) # but this is really for Rmarkdown not knitr
+%% pandoc.table(summary(lm(y~x))$coefficients, style = 'rmarkdown',
+%%       caption ="Summary of regression coefficients", 
+%%       digits = 2) #,  plain.ascii = TRUE)
+%% @ 
+%% \end{frame}
+
+
+\end{document}

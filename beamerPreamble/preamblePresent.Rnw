@@ -11,7 +11,10 @@
 %% presentation  ---------------------------------------------
 %%\documentclass[ignorenonframetext,compress,presentation]{beamer}
 
-\documentclass[ignorenonframetext,presentation]{beamer}
+%% 16:9 aspect ration
+\documentclass[ignorenonframetext,presentation,aspectratio=169]{beamer}
+%% 4:3 aspect ratio
+%%\documentclass[ignorenonframetext,presentation]{beamer}
 %%\usepackage{beamerthemebars} % creates the pretty bars and links
 
 %% article  --------------------------------------------------

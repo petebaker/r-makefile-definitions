@@ -1,7 +1,10 @@
-## Example Makefile
+## File: Makefile.system
+## Example Makefile which uses system installed files eg r-rules.mk and
+##   beamer stuff etc. Run with
+## $  make -f Makefile.system
 
 .PHONY: all
-all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf knitr-minimal-syntax.R  knitr-minimal.pdf
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf knitr-minimal-syntax.R  knitr-minimal.pdf beamer1_Present.pdf beamer1-6up.pdf beamer1-syntax.R beamer2_Present.pdf beamer2-6up.pdf beamer2-syntax.R
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
@@ -19,7 +22,7 @@ test-stitch.Rout: ${@:.Rout=.R}
 test-stitch.pdf: ${@:.pdf=.R}
 
 ## comment following line if you place the 'r-rules.mk' file elsewhere
-include r-rules.mk
+include ~/lib/r-rules.mk
 
 ## if you have 'r-rules.mk' in ~/lib directory uncomment line below and
 ##  comment include line above
