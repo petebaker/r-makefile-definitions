@@ -138,6 +138,7 @@ To use these makefile definitions you need to install
 Note that *Windows* users can install *Rtools* (available via CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
+- pdfjam (for beamer from R Sweave). Included in texlive except for Windows where it can be installed from  https://github.com/DavidFirth/pdfjam to run on MSYS2 which is the shell that comes with Rtools 4.0
 
 *macOS* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode* so using *gmake* is highly recommended.
 
