@@ -1,12 +1,6 @@
 GNU Make rules for Data Analysis and Reporting
 =============
 
-Note: This branch is to fix a problem that seems to appear after R 4.0 was released but may have been present prior to this. Basically, R Markdown and knit use the construct \\" which have been replaced with ' in these definitions. The awk command for Beamer TeX file construction needs checking as I haven't changed that yet.
-
-Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
-
-Comprehensive documentation is available: *Peter Baker (2020) Using GNU Make to Manage the Workflow of Data Analysis Projects, Journal of Statistical Software.* https://doi.org/10.18637/jss.v094.c01
-
 **GNU Make** is a commonly used tool as part of the process for
   managing software projects.
 
@@ -19,6 +13,10 @@ practices. One such approach is to use a tool like GNU Make. Such an
 approach does not obviate the need to be organised and document the
 work but it can certainly prove helpful, especially as a project grows
 in size.
+
+Comprehensive documentation is available: *Peter Baker (2020) Using GNU Make to Manage the Workflow of Data Analysis Projects, Journal of Statistical Software.* https://doi.org/10.18637/jss.v094.c01
+
+Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
 
 While it is far from perfect, **make** is widely used and generally
 proves to be useful for efficiently carrying out tasks in data
@@ -138,7 +136,7 @@ To use these makefile definitions you need to install
 Note that *Windows* users can install *Rtools* (available via CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
 - miktex   http://miktex.org/
-- pdfjam (for beamer from R Sweave). Included in texlive except for Windows where it can be installed from  https://github.com/DavidFirth/pdfjam to run on MSYS2 which is the shell that comes with Rtools 4.0
+- pdfjam (for beamer from R Sweave). Included in texlive except for Windows where it can be installed from  https://github.com/DavidFirth/pdfjam to run on MSYS2 which is the shell that comes with Rtools 4.0. However, cygwin mangles the filenames when using texlive. A workaround is to use the PDF_OPTS=--no-tidy and manually fix the filename to rerun pdflatex. Details soon.
 
 *macOS* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode* so using *gmake* is highly recommended.
 
