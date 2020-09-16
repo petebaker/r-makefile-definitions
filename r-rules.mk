@@ -4,7 +4,7 @@
 ##
 ## Licence: GPLv3 see <http://www.gnu.org/licenses/>
 ##
-## Version: 0.4 alpha (Version 0.3.9001)
+## Version: 0.4 RC 1 (Version 0.3.9003)
 ## Usage: Place file in a directory such as ~/lib and include with
 ##         include ~/lib/r-rules.mk
 ##         at the bottom of Makefile (or adjust for your directory of choice)
@@ -21,7 +21,7 @@
 ##                Analysis Projects https://doi.org/10.18637/jss.v094.c01
 
 VERSION = 0.3.9003
-VERSION_TAG = "Version 0.4rc1"
+VERSION_TAG = "Version 0.4-rc1"
 
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
