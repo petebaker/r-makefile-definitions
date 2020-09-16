@@ -18,20 +18,21 @@ Comprehensive documentation is available: *Peter Baker (2020) Using GNU Make to 
 
 Also see [the blog site](http://www.petebaker.id.au "Peter Baker's outback R blog") for this and related material.
 
-While it is far from perfect, **make** is widely used and generally
+While it is far from perfect, **Make** is widely used and generally
 proves to be useful for efficiently carrying out tasks in data
-analysis.  Unfortunately, **make** does not provide standard rules for
+analysis.  Unfortunately, **Make** does not provide standard rules for
 producing *.Rout* files from *.R* files, *.pdf* files from *.Rnw*
 files, *.docx* files from *.Rmd* files and so on.
 
 The file *r-rules.mk* can be included in a standard *Makefile* to
 facilitate a more efficient workflow.
 
-**NB:** For **macOS**, make (like many other programs), is pretty
+**NB:** For **MacOS**, make (like many other programs), is pretty
 ancient in computing terms. You may prefer to install a recent version
 of *GNU Make*. IMHO, the best way is to install via *homebrew* - see
 http://brew.sh/. Use *gmake* which will run the new version instead of
-*make* which runs the old one.
+*make* which runs the old one. For Windows, installing *Rtools 4.0* or
+higher will provide a recent version.
 
 Using r-rules.mk
 ============
@@ -130,22 +131,28 @@ To use these makefile definitions you need to install
 - GNU Make  http://www.gnu.org/software/make/
 - R         http://www.r-project.org/
 - R packages on CRAN: rmarkdown, knitr
-- pandoc   http://johnmacfarlane.net/pandoc/
-- latexmk   http://http://www.ctan.org/pkg/latexmk/ (only for R Sweave)
+- Pandoc   http://johnmacfarlane.net/pandoc/
+- Latexmk   http://http://www.ctan.org/pkg/latexmk/ (only for R Sweave)
 
 Note that *Windows* users can install *Rtools* (available via CRAN) to get a working version of make and may also need to install pandoc and latex to produce pdf files if they haven't already. Miktex is recommended although texlive will also work well.
 - Rtools   http://cran.r-project.org/bin/windows/Rtools/
-- miktex   http://miktex.org/
-- pdfjam (for beamer from R Sweave). Included in texlive except for Windows where it can be installed from  https://github.com/DavidFirth/pdfjam to run on MSYS2 which is the shell that comes with Rtools 4.0. However, cygwin mangles the filenames when using texlive. A workaround is to use the PDF_OPTS=--no-tidy and manually fix the filename to rerun pdflatex. Details soon.
+- miktex   http://miktex.org/ or texlive http://tug.org/texlive/
+- pdfjam for multiple page handouts from R Markdown beamer from R
+  Sweave beamer. Included in texlive except for Windows where it can
+  be installed from https://github.com/DavidFirth/pdfjam to run on
+  *MSYS2* which is the shell that comes with *Rtools 4.0*. However, cygwin
+  mangles the filenames when using texlive. A workaround is to use the
+  *PDF_OPTS=--no-tidy* and manually fix the filename to rerun
+  pdflatex. More details soon.
 
-*macOS* users can install *gnu make* from homebrew or macports. Homebrew versions of *latexmk* and *pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *make* than comes with *XCode* so using *gmake* is highly recommended.
+*Macos* users can install *gnu make* from homebrew or macports. Homebrew versions of *Latexmk* and *Pandoc* are also available but *MacTex* is available as a binary package at http://www.tug.org/mactex/. Some rules may need a newer version of *Make* than comes with *XCode* so using *gmake* is highly recommended.
 
 Notes
 =======
 
-Definitions in 'r-rules.mk' have been developed and tested on linux. These rules have also been reasonably well tested on windows (Rtools) and macOS (homebrew 'gmake' - not macOS Xcode gnu 'make' which is 10 years old). Some tweaking may be required and is indeed encouraged.
+Definitions in 'r-rules.mk' have been developed and tested on Linux. These rules have also been reasonably well tested on windows (Rtools) and MacOS (homebrew 'gmake' - not MacOS Xcode gnu 'make' which is 10 years old). However, *R Tools 4.0* seemed to break some rules which were rewritten for Version 0.4. Some tweaking may be required and is indeed encouraged.
 
-Extra rules for SAS, STATA, PSPP, python and perl are very preliminary and not extensively tested.
+Extra rules for SAS, STATA, PSPP, Python and Perl are very preliminary and not extensively tested.
 
 Once you have a *Makefile* which includes the file 'r-rules.mk' you can type 'make help' at the command prompt for further information. You can also tweak the variables like $R, $R_OPTS defined in 'r-rules.mk' to change the defaults without needing to rewrite 'r-rules.mk'.
 
