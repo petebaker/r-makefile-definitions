@@ -20,8 +20,8 @@
 ##   Peter Baker. Using GNU Make to Manage the Workflow of Data
 ##                Analysis Projects https://doi.org/10.18637/jss.v094.c01
 
-VERSION = 0.3.9001
-VERSION_TAG = "Version 0.4 alpha"
+VERSION = 0.3.9003
+VERSION_TAG = "Version 0.4rc1"
 
 ## For help after including r-rules.mk in Makefile: run
 ##         $  make help
@@ -609,10 +609,12 @@ help-rmarkdown:
 	$(PDFJAM) $(PDFJAM_OPTS) -o $@ ${PDFJAM_2UP} $<
 
 %_beamer-6up.pdf: %_beamer-handout.pdf
-	$(PDFJAM)-slides6up $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
+##	$(PDFJAM)-slides6up $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
 
 %_beamer-3up.pdf: %_beamer-handout.pdf
-	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
+##	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
 
 ## tufte handout format (NB: first install.packages("tufte", dep=T))
 %_tufte.pdf: %.Rmd
@@ -793,8 +795,10 @@ BEAMER_ARTICLE = ${BEAMER_LIB}preambleArticle.Rnw
 BEAMER_NOTES = ${BEAMER_LIB}preambleNotes.Rnw
 PDFJAM_4UP = --nup 2x2 --frame true --landscape --scale 0.92
 PDFJAM_2UP = --nup 1x2 --frame true --no-landscape --scale 0.92
-PDFJAM_3UP = --no-landscape
-PDFJAM_6UP = --no-landscape
+PDFJAM_3UP = --nup 1x3 --frame true --no-landscape --scale 0.92
+PDFJAM_6UP = --nup 2x3 --frame true --no-landscape --scale 0.92
+## PDFJAM_3UP = --no-landscape
+## PDFJAM_6UP = --no-landscape
 
 ## Beamer presentation pdf
 %_Present.Rnw: %.Rnw $(BEAMER_PRESENT)
@@ -837,10 +841,12 @@ PDFJAM_6UP = --no-landscape
 	$(PDFJAM) $(PDFJAM_OPTS) -o $@ ${PDFJAM_2UP} $<
 
 %-6up.pdf: %_Handout.pdf
-	$(PDFJAM)-slides6up $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
+##	$(PDFJAM)-slides6up $(PDFJAM_OPTS) -o $@ $(PDFJAM_6UP) $< 
 
 %-3up.pdf: %_Handout.pdf
-	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
+	$(PDFJAM) $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
+##	$(PDFJAM)-slides3up $(PDFJAM_OPTS) -o $@ $(PDFJAM_3UP) $<
 
 ## ---------------------------------------------------------------
 ## house-keeping/cleaning ----------------------------------------
