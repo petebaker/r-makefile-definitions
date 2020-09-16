@@ -1,7 +1,7 @@
 ## Example Makefile (using setup and files in source tree)
 
 .PHONY: all
-all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf knitr-minimal-syntax.R knitr-minimal.pdf beamer1_Present.pdf beamer1-6up.pdf beamer1-syntax.R beamer2_Present.pdf beamer2-6up.pdf beamer2-syntax.R
+all: test.pdf test.html test.docx test2.pdf test-stitch.Rout test-stitch.pdf knitr-minimal-syntax.R  knitr-minimal.pdf beamer1_Present.pdf beamer1-6up.pdf beamer1-syntax.R beamer2_Present.pdf beamer2-2up.pdf beamer2-3up.pdf beamer2-4up.pdf beamer2-6up.pdf beamer2-syntax.R
 
 ## produce pdf, html, docx from test.Rmd
 test.pdf: ${@:.pdf=.Rmd}
@@ -23,7 +23,7 @@ include ../r-rules.mk
 
 ## to use beamer preambles in source tree
 BEAMER_LIB = ../beamerPreamble/
-
+PDFJAM_OPTS = --no-tidy
 
 ## if you have 'r-rules.mk' in ~/lib directory uncomment line below and
 ##  comment include line above
